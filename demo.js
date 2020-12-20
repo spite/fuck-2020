@@ -13,19 +13,22 @@ import { settings } from "./js/settings.js";
 
 const gui = new dat.GUI();
 
-const params = new (function () {
-  this.blurExposure = 0.5;
-  this.blurRadius = 1;
-  this.blurStrength = 1;
-
-  this.opacity = 1;
-})();
+const params = {
+  blurExposure: 0.5,
+  blurRadius: 1,
+  blurStrength: 1,
+  aberration: 0.1,
+  opacity: 1,
+  distortion: 0.05,
+};
 
 const postFolder = gui.addFolder("Post");
 postFolder.add(params, "blurExposure", 0, 3, 0.01);
 postFolder.add(params, "blurRadius", 0, 1, 0.01);
 postFolder.add(params, "blurStrength", 0, 2, 0.01);
+postFolder.add(params, "aberration", 0, 1, 0.01);
 postFolder.add(params, "opacity", 0, 1, 0.01);
+postFolder.add(params, "distortion", 0, 0.5, 0.01);
 postFolder.open();
 
 const canvas = document.createElement("canvas");
@@ -80,6 +83,8 @@ function render(t) {
   intro.blurStrength = params.blurStrength;
   intro.final.shader.uniforms.exposure.value = params.blurExposure;
   intro.post.shader.uniforms.opacity.value = params.opacity;
+  intro.post.shader.uniforms.aberration.value = params.aberration;
+  intro.cylinderMat.uniforms.distortion.value = params.distortion;
 
   intro.render(audio.currentTime);
   composer.render(intro.post.fbo);

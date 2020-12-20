@@ -111,6 +111,7 @@ precision highp float;
 
 uniform sampler2D inputTexture;
 uniform float opacity;
+uniform float aberration;
 
 varying vec2 vUv;
 
@@ -118,8 +119,7 @@ ${chromaticAberration}
 ${vignette}
 
 void main() {
-  float amount = 0.2;
-  vec4 c = chromaticAberration(inputTexture, vUv, amount);
+  vec4 c = chromaticAberration(inputTexture, vUv, aberration);
   c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
   gl_FragColor = c;
 }
@@ -145,6 +145,7 @@ const shader = new RawShaderMaterial({
 const finalShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
+    aberration: { value: 1 },
     opacity: { value: 1 },
   },
   vertexShader: orthoVs,

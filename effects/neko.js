@@ -127,6 +127,7 @@ precision highp float;
 
 uniform sampler2D inputTexture;
 uniform float opacity;
+uniform float aberration;
 
 varying vec2 vUv;
 
@@ -134,8 +135,7 @@ ${chromaticAberration}
 ${vignette}
 
 void main() {
-  float amount = 0.2;
-  vec4 c = chromaticAberration(inputTexture, vUv, amount);
+  vec4 c = chromaticAberration(inputTexture, vUv, aberration);
   c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
   gl_FragColor = c;
 }
@@ -161,6 +161,7 @@ const shader = new RawShaderMaterial({
 const finalShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
+    aberration: { value: 1 },
     opacity: { value: 1 },
   },
   vertexShader: orthoVs,
@@ -202,6 +203,9 @@ class Effect extends glEffectBase {
   async initialise() {
     super.initialise();
 
+    this.cylinder = new Group();
+    this.cylinderMat = new CylinderMaterial(); //MeshNormalMaterial({ side: DoubleSide });
+
     this.cubeRenderTarget = new WebGLCubeRenderTarget(2048, {
       format: RGBAFormat,
       //type: canDoFloatLinear() ? FloatType : HalfFloatType,
@@ -217,12 +221,10 @@ class Effect extends glEffectBase {
 
     const loader = new OBJLoader();
     loader.load("assets/cylinder.obj", (e) => {
-      const mat = new CylinderMaterial(); //MeshNormalMaterial({ side: DoubleSide });
-      this.cylinder = new Group();
       this.cylinder.position.y = -5;
       while (e.children.length) {
         const m = e.children[0];
-        m.material = mat;
+        m.material = this.cylinderMat;
         this.cylinder.add(m);
       }
       this.scene.add(this.cylinder);
@@ -316,6 +318,8 @@ class Effect extends glEffectBase {
   }
 
   render(t) {
+    this.cylinder.rotation.y = 0.00005 * performance.now();
+    this.cylinderMat.uniforms.time.value = 0.00005 * performance.now();
     if (this.pivot) {
       this.pivot.rotation.x += 0.1;
     }
@@ -327,8 +331,8 @@ class Effect extends glEffectBase {
     // return;
     // this.mesh.rotation.x = t;
     // this.mesh.rotation.y = 0.8 * t;
-    //this.renderer.render(this.scene, this.camera);
-    //return;
+    // this.renderer.render(this.scene, this.camera);
+    // return;
 
     this.renderer.setRenderTarget(this.fbo);
     this.renderer.render(this.scene, this.camera);

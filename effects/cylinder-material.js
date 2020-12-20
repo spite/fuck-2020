@@ -52,6 +52,8 @@ in vec3 vNormal;
 in vec2 vUv;
 
 uniform sampler2D text;
+uniform float time;
+uniform float distortion;
 
 out vec4 color;
 
@@ -64,24 +66,47 @@ float aastep(float x, in vec2 uv) {
   return smoothstep(.5-w,.5+w,x);
 }
 
-void main() {
-  float a = .5 + atan(vWorldPosition.z, vWorldPosition.x) / (2. * M_PI);
-  float h = .25 + (vWorldPosition.y+5.) / 30.;
-  vec2 tUv = vec2(a,h) + .05*vNormal.xy;
-  vec4 t = 1.-texture(text, tUv);
+const float dotSpace = 2.0;
+const float dotSize = 4.;
 
-  color = vec4(vec3(aastep(t.r, vUv)), 1.);//t;//vec4(1.);
+const float sinPer = 3.141592 / dotSpace;
+const float frac = dotSize / dotSpace;
+
+vec4 grid( in sampler2D map, in vec2 uv ) {
+  vec2 res = vec2(1024.,256.);
+  float spacing = 3.;
+  vec2 nuv = floor(uv*res/spacing)*spacing/res;
+  float s = 1.-texture(map, nuv).r;
+  float w = 2.;
+  float size = (spacing-w) * s;
+  float blur = w * s;
+  vec2 pos = mod(uv*vec2(1024.,256.), vec2(spacing)) - vec2(spacing/2.0);
+  float dist_squared = dot(pos, pos);
+  return 1.-vec4(smoothstep(size, size + blur, dist_squared));
+}
+
+void main() {
+  float a = .5 + atan(vWorldPosition.z, vWorldPosition.x) / (2. * M_PI) + time;
+  float h = .25 + (vWorldPosition.y+5.) / 30.;
+  vec2 tUv = vec2(a,h) + distortion*vNormal.xy;
+//  vec4 t = 1.-texture(text, tUv, 4.);
+
+  vec4 grid = grid(text, tUv);
+  color = grid;//vec4(vec3(aastep(t.r, vUv)), 1.);//t;//vec4(1.);
 }
 `;
 
 const loader = new TextureLoader();
 const text = loader.load("./assets/text.png");
+text.wrapS = text.wrapT = RepeatWrapping;
 
 class CylinderMaterial extends RawShaderMaterial {
   constructor() {
     super({
       uniforms: {
         text: { value: text },
+        time: { value: 0 },
+        distortion: { value: 0.05 },
       },
       vertexShader,
       fragmentShader,
