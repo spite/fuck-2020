@@ -74,7 +74,7 @@ void main() {
 `;
 
 const loader = new TextureLoader();
-const text = loader.load("../assets/text.png");
+const text = loader.load("./assets/text.png");
 
 class CylinderMaterial extends RawShaderMaterial {
   constructor() {
