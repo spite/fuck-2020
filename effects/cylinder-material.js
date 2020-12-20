@@ -58,18 +58,19 @@ out vec4 color;
 #define M_PI 3.1415926535897932384626433832795
 #define M_TAU (2. * M_PI)
 
-float atan2(in float y, in float x)
-{
-    bool s = (abs(x) > abs(y));
-    return mix(M_PI/2.0 - atan(x,y), atan(y,x), s);
+
+float aastep(float x, in vec2 uv) {
+  float w = length(fwidth(uv));
+  return smoothstep(.5-w,.5+w,x);
 }
 
 void main() {
   float a = .5 + atan(vWorldPosition.z, vWorldPosition.x) / (2. * M_PI);
-  float h = .25 + vWorldPosition.y / 30.;
+  float h = .25 + (vWorldPosition.y+5.) / 30.;
   vec2 tUv = vec2(a,h) + .05*vNormal.xy;
   vec4 t = 1.-texture(text, tUv);
-  color = t;//vec4(1.);
+
+  color = vec4(vec3(aastep(t.r, vUv)), 1.);//t;//vec4(1.);
 }
 `;
 

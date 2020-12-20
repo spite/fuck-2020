@@ -18,6 +18,7 @@ const normal = loader.load(`./assets/manekineko_light_normal.png`);
 const roughness = loader.load(`./assets/manekineko_light_roughness.png`);
 
 diffuse.encoding = sRGBEncoding;
+dark.encoding = sRGBEncoding;
 normal.encoding = LinearEncoding;
 roughness.encoding = LinearEncoding;
 
@@ -43,10 +44,10 @@ class NekoMaterial extends MeshStandardMaterial {
   constructor() {
     const params = {
       roughness: 0.52,
-      metalness: 0.1,
+      metalness: 1,
       map: diffuse,
       color: 0xffffff,
-      emissive: 0x00fffa,
+      emissive: 0xffffff,
       emissiveMap: dark,
       normalMap: normal,
       normalScale: new Vector2(0.05, 0.05),
@@ -56,7 +57,7 @@ class NekoMaterial extends MeshStandardMaterial {
     super(params);
 
     this.params = params;
-    this.params.badness = 0;
+    this.params.badness = 1;
 
     this.uniforms = {
       roughness: { value: this.params.roughness },
@@ -93,7 +94,8 @@ uniform float badness;`
         `#include <emissivemap_fragment>`,
         `#ifdef USE_EMISSIVEMAP
         vec4 emissiveColor = texture2D( emissiveMap, vUv );
-        emissiveColor -= .1*texture2D( emissiveMap, vUv,8. );
+        //emissiveColor -= .1*texture2D( emissiveMap, vUv,8. );
+        //emissiveColor *= 0.;
         emissiveColor.rgb = emissiveMapTexelToLinear( emissiveColor*badness ).rgb;
         totalEmissiveRadiance *= emissiveColor.rgb;
       #endif`

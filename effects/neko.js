@@ -43,6 +43,7 @@ import Maf from "../third_party/Maf.js";
 import { settings } from "../js/settings.js";
 import { canDoFloatLinear } from "../js/features.js";
 import { OBJLoader } from "../third_party/OBJLoader.js";
+import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
 import {
   NekoMaterial,
   generateParams as generateNekoParams,
@@ -61,6 +62,8 @@ import { shader as blurFs } from "../shaders/blur-fs.js";
 import { screen } from "../shaders/screen.js";
 import { chromaticAberration } from "../shaders/chromatic-aberration.js";
 import { vignette } from "../shaders/vignette.js";
+
+RectAreaLightUniformsLib.init();
 
 const blurShader = new RawShaderMaterial({
   uniforms: {
@@ -180,6 +183,8 @@ class Effect extends glEffectBase {
     this.blurPasses = [];
     this.levels = 5;
 
+    this.neko = new Group();
+
     for (let i = 0; i < this.levels; i++) {
       const blurPass = new ShaderPingPongPass(this.renderer, blurShader, {
         format: RGBAFormat,
@@ -197,9 +202,9 @@ class Effect extends glEffectBase {
   async initialise() {
     super.initialise();
 
-    this.cubeRenderTarget = new WebGLCubeRenderTarget(1024, {
+    this.cubeRenderTarget = new WebGLCubeRenderTarget(2048, {
       format: RGBAFormat,
-      type: canDoFloatLinear() ? FloatType : HalfFloatType,
+      //type: canDoFloatLinear() ? FloatType : HalfFloatType,
       generateMipmaps: true,
       minFilter: LinearMipmapLinearFilter,
     });
@@ -213,11 +218,14 @@ class Effect extends glEffectBase {
     const loader = new OBJLoader();
     loader.load("assets/cylinder.obj", (e) => {
       const mat = new CylinderMaterial(); //MeshNormalMaterial({ side: DoubleSide });
+      this.cylinder = new Group();
+      this.cylinder.position.y = -5;
       while (e.children.length) {
         const m = e.children[0];
         m.material = mat;
-        this.scene.add(m);
+        this.cylinder.add(m);
       }
+      this.scene.add(this.cylinder);
     });
 
     loader.load("assets/neko.obj", (e) => {
@@ -232,46 +240,56 @@ class Effect extends glEffectBase {
       this.arm.position.copy(this.pivot.position).multiplyScalar(-1);
       this.pivot.add(this.arm);
       this.body = e.children[0];
-      this.scene.add(this.body);
+      this.neko.add(this.body);
 
       const mat = new NekoMaterial();
       generateNekoParams(this.gui, mat);
+      mat.envMap = this.cubeRenderTarget.texture;
       this.body.material = mat;
       this.arm.material = mat;
-      this.scene.add(this.pivot);
+      this.neko.add(this.pivot);
+
+      this.scene.add(this.neko);
 
       this.body.castShadow = this.body.receiveShadow = true;
       this.arm.castShadow = this.arm.receiveShadow = true;
 
-      // const width = 10;
-      // const height = 10;
-      // const intensity = 0.11;
-      // const rectLight = new RectAreaLight(0xffffff, intensity, width, height);
-      // rectLight.position.set(5, 5, 0);
-      // rectLight.lookAt(0, 0, 0);
-      // this.scene.add(rectLight);
+      const width = 20;
+      const height = 20;
+      const intensity = 1;
+      const rectLight = new RectAreaLight(0xf900ff, intensity, width, height);
+      this.lightBack = rectLight;
+      rectLight.position.set(-3, 1.5, -5);
+      rectLight.lookAt(0, 0, 0);
+      this.scene.add(rectLight);
 
-      const pointLight = new PointLight(0xffffff);
+      const pointLight = new PointLight(0xf900ff);
       pointLight.position.set(-3, 1.5, -5);
       pointLight.castShadow = true;
-      this.scene.add(pointLight);
+      //this.scene.add(pointLight);
       //window.light = pointLight;
 
-      const pointLight2 = new PointLight(0xffffff);
-      pointLight2.position.set(4.8, 3.8, 5.7);
+      const rectLight2 = new RectAreaLight(0x00aaff, intensity, width, height);
+      rectLight2.position.set(4.8, 3.8, 5.7);
+      rectLight2.lookAt(0, 0, 0);
+      this.lightFront = rectLight2;
+      this.scene.add(rectLight2);
+
+      const pointLight2 = new PointLight(0x00aaff);
+      pointLight2.position.set(2.4, 1.9, 2.8);
       pointLight2.castShadow = true;
-      this.scene.add(pointLight2);
+      //this.scene.add(pointLight2);
 
       const spotLight = new SpotLight(0xffffff, 1, 0, 0.394, 0.88, 1);
       spotLight.position.set(5, 10, 7.5);
       spotLight.lookAt(this.scene.position);
       spotLight.castShadow = true;
-      this.scene.add(spotLight);
+      //this.scene.add(spotLight);
       //const rectLightHelper = new RectAreaLightHelper(rectLight);
       //this.rectLight.add(rectLightHelper);
 
       const ambientLight = new AmbientLight(0xb53030, 0.16);
-      this.scene.add(ambientLight);
+      //this.scene.add(ambientLight);
 
       this.renderer.compile(this.scene, this.camera);
     });
@@ -301,16 +319,16 @@ class Effect extends glEffectBase {
     if (this.pivot) {
       this.pivot.rotation.x += 0.1;
     }
-    // this.mesh.visible = false;
-    // this.cubeCamera.update(this.renderer, this.scene);
-    // this.mesh.visible = true;
+    this.neko.visible = false;
+    this.cubeCamera.update(this.renderer, this.scene);
+    this.neko.visible = true;
 
     // this.renderer.render(this.scene, this.camera);
     // return;
     // this.mesh.rotation.x = t;
     // this.mesh.rotation.y = 0.8 * t;
-    this.renderer.render(this.scene, this.camera);
-    return;
+    //this.renderer.render(this.scene, this.camera);
+    //return;
 
     this.renderer.setRenderTarget(this.fbo);
     this.renderer.render(this.scene, this.camera);

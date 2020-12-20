@@ -14,7 +14,7 @@ import { settings } from "./js/settings.js";
 const gui = new dat.GUI();
 
 const params = new (function () {
-  this.blurExposure = 1;
+  this.blurExposure = 0.5;
   this.blurRadius = 1;
   this.blurStrength = 1;
 
@@ -82,7 +82,7 @@ function render(t) {
   intro.post.shader.uniforms.opacity.value = params.opacity;
 
   intro.render(audio.currentTime);
-  //composer.render(intro.post.fbo);
+  composer.render(intro.post.fbo);
   requestAnimationFrame(render);
 }
 
