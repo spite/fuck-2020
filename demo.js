@@ -83,7 +83,7 @@ function render(t) {
   intro.post.shader.uniforms.opacity.value = params.opacity;
 
   intro.render(audio.currentTime);
-  composer.render(intro.post.fbo);
+  //composer.render(intro.post.fbo);
   requestAnimationFrame(render);
 }
 

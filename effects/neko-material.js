@@ -93,6 +93,7 @@ uniform float badness;`
         `#include <emissivemap_fragment>`,
         `#ifdef USE_EMISSIVEMAP
         vec4 emissiveColor = texture2D( emissiveMap, vUv );
+        emissiveColor -= .1*texture2D( emissiveMap, vUv,8. );
         emissiveColor.rgb = emissiveMapTexelToLinear( emissiveColor*badness ).rgb;
         totalEmissiveRadiance *= emissiveColor.rgb;
       #endif`
@@ -101,7 +102,7 @@ uniform float badness;`
       shader.fragmentShader = shader.fragmentShader.replace(
         `#include <dithering_fragment>`,
         `#include <dithering_fragment>
-        gl_FragColor.a = 4.*length(emissiveColor.rgb) * badness;`
+        gl_FragColor.a = 1.;// 4.*length(emissiveColor.rgb) * badness;`
       );
     };
   }
@@ -109,14 +110,18 @@ uniform float badness;`
 
 function generateParams(gui, material) {
   const params = material.params;
-  gui.add(params, "roughness", 0, 1).onChange((v) => (material.roughness = v));
-  gui.add(params, "metalness", 0, 1).onChange((v) => (material.metalness = v));
+  gui
+    .add(params, "roughness", 0, 1)
+    .onChange((v) => (material.roughness = (1 - params.badness) * v));
+  gui
+    .add(params, "metalness", 0, 1)
+    .onChange((v) => (material.metalness = (1 - params.badness) * v));
   gui.add(params, "badness", 0, 1).onChange((v) => {
     const vv = Easings.InOutQuad(v);
     material.uniforms.badness.value = v;
-    material.roughness = (1 - vv) * 0.52;
-    material.metalness = Maf.mix(0.1, 1, vv);
-    material.uniforms.normalScale.value.setScalar((1 - vv) * 0.52);
+    material.roughness = (1 - vv) * params.roughness;
+    material.metalness = Maf.mix(params.metalness, 1, vv);
+    material.uniforms.normalScale.value.setScalar((1 - vv) * 0.05);
   });
 }
 

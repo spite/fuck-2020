@@ -34,6 +34,7 @@ import {
   sRGBEncoding,
   CubeTextureLoader,
   LinearEncoding,
+  DoubleSide,
 } from "../third_party/three.module.js";
 import { ShaderPass } from "../js/ShaderPass.js";
 import { ShaderPingPongPass } from "../js/ShaderPingPongPass.js";
@@ -210,8 +211,9 @@ class Effect extends glEffectBase {
 
     const loader = new OBJLoader();
     loader.load("assets/cylinder.obj", (e) => {
-      const mat = new MeshNormalMaterial();
-      for (const m of e.children) {
+      const mat = new MeshNormalMaterial({ side: DoubleSide });
+      while (e.children.length) {
+        const m = e.children[0];
         m.material = mat;
         this.scene.add(m);
       }
@@ -306,6 +308,9 @@ class Effect extends glEffectBase {
     // return;
     // this.mesh.rotation.x = t;
     // this.mesh.rotation.y = 0.8 * t;
+    this.renderer.render(this.scene, this.camera);
+    return;
+
     this.renderer.setRenderTarget(this.fbo);
     this.renderer.render(this.scene, this.camera);
     this.renderer.setRenderTarget(null);
