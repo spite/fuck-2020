@@ -47,6 +47,7 @@ import {
   NekoMaterial,
   generateParams as generateNekoParams,
 } from "./neko-material.js";
+import { CylinderMaterial } from "./cylinder-material.js";
 
 import { shader as geoVs } from "../shaders/sdf-geo-vs.js";
 import { shader as geoFs } from "../shaders/sdf-geo-fs.js";
@@ -211,7 +212,7 @@ class Effect extends glEffectBase {
 
     const loader = new OBJLoader();
     loader.load("assets/cylinder.obj", (e) => {
-      const mat = new MeshNormalMaterial({ side: DoubleSide });
+      const mat = new CylinderMaterial(); //MeshNormalMaterial({ side: DoubleSide });
       while (e.children.length) {
         const m = e.children[0];
         m.material = mat;

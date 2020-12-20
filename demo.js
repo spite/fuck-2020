@@ -30,11 +30,10 @@ postFolder.open();
 
 const canvas = document.createElement("canvas");
 document.body.append(canvas);
-const context = canvas.getContext("webgl");
+//const context = canvas.getContext("webgl");
 
 const renderer = new WebGLRenderer({
   canvas,
-  context,
   preserveDrawingBuffer: false,
   antialias: false,
   powerPreference: "high-performance",
