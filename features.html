@@ -1,0 +1,21 @@
+<body></body>
+<script type="module">
+  import * as features from "./js/features.js";
+
+  const str = `
+  <p>Results:</p>
+  <p>EXT_shader_texture_lod: ${features.canDoTexLOD()}</p>
+  <p>Float linear: ${features.canDoFloatLinear()}</p>
+  <p> - Float: ${features.floatTextures.float}</p>
+  <p> - Float linear: ${features.floatTextures.floatFilter}</p>
+  <p> - Render to float: ${features.floatTextures.canRenderToFloat}</p>
+  <p>Half float linear: ${features.canDoFloatLinear()}</p>
+  <p> - Half float: ${features.floatTextures.halfFloat}</p>
+  <p> - Half float linear: ${features.floatTextures.halfFloatFilter}</p>
+  <p> - Render to half float: ${features.floatTextures.canRenderToHalfFloat}</p>
+  <p>WEBGL_color_buffer_float linear: ${features.canDoColorBufferFloat()}</p>
+  <p>EXT_color_buffer_half_float: ${features.canDoColorBufferHalfFloat()}</p>
+  `;
+
+  document.body.innerHTML = str;
+</script>

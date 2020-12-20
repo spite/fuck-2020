@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>OBSOLIDIAN</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <style>
+      html {
+        height: 100%;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        color: white;
+        background-color: #000;
+        font-family: "Josefin Sans", sans-serif;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+      button {
+        padding: 8px 10px;
+      }
+      canvas {
+        display: block;
+      }
+      #info {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+      #playButton {
+        top: 50%;
+        left: 50%;
+        display: none;
+      }
+      #container {
+        height: 100%;
+      }
+      h1 {
+        font-weight: 200;
+        font-size: 10vw;
+        line-height: 7.5vw;
+      }
+      h1 span,
+      h2 span {
+        font-weight: 600;
+      }
+      h2 {
+        font-size: 2vw;
+        font-weight: 200;
+        text-transform: uppercase;
+        margin-bottom: 10vw;
+      }
+      #loading {
+        font-size: 2vw;
+        text-transform: uppercase;
+      }
+      #playOverlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        display: none;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="info">
+      <h1>OB<span>SOLID</span>IAN</h1>
+      <h2>by <span>three</span> guys</h2>
+      <div id="loading">Loading...</div>
+    </div>
+
+    <div id="playOverlay"></div>
+
+    <div id="container"></div>
+
+    <script>
+      function glsl(s) {
+        return s[0];
+      }
+    </script>
+
+    <script type="module">
+      import { Resources, Player, Timeline } from "./js/Frame.js";
+
+      const resources = new Resources();
+      resources.set("dom", document.getElementById("container"));
+
+      const timeline = new Timeline();
+      const player = new Player();
+
+      load("./script.json");
+
+      //
+
+      const loading = document.querySelector("#loading");
+      const playOverlay = document.querySelector("#playOverlay");
+
+      async function load(path) {
+        await timeline.load(path);
+        await timeline.compile(resources, player);
+
+        loading.textContent = "Play";
+        playOverlay.style.display = "flex";
+
+        playOverlay.addEventListener("click", async () => {
+          info.style.display = "none";
+          playOverlay.style.display = "none";
+
+          if (container.requestFullscreen) {
+            await container.requestFullscreen();
+          } else if (container.webkitRequestFullScreen) {
+            container.webkitRequestFullScreen(); // Safari
+          }
+
+          player.play();
+
+          animate((prevTime = performance.now()));
+        });
+      }
+
+      let prevTime = 0;
+
+      function animate(time) {
+        player.tick(time - prevTime);
+        timeline.update(player.currentTime);
+
+        prevTime = time;
+
+        window.requestAnimationFrame(animate);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Solskogen 2020</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        overflow: hidden;
+        background-color: black;
+        color: white;
+      }
+      canvas {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+      }
+      .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        justify-content: center;
+        place-items: center;
+        display: flex;
+      }
+      #loading {
+        pointer-events: none;
+      }
+      #start {
+        pointer-events: auto;
+        display: none;
+      }
+      .dg.ac {
+        z-index: 10 !important;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/css?family=Krona+One|Open+Sans"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="overlay" id="loading">Loading...</div>
+    <div class="overlay" id="start">Start</div>
+    <!--<script src="js/CCapture.all.min.js"></script>-->
+    <script async type="module" src="demo.js"></script>
+  </body>
+</html>
