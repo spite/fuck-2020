@@ -30,6 +30,8 @@ out vec3 vPosition;
 out vec4 vWorldPosition;
 out vec2 vUv;
 out vec3 vNormal;
+out float vDiffuse;
+out float vDiffuse2;
 
 void main() {
   vUv = uv;
@@ -38,6 +40,15 @@ void main() {
   vEyePosition = viewMatrix * vWorldPosition;
   vNormal = normalMatrix * normal;
   gl_Position = projectionMatrix * vEyePosition;
+
+  vec3 lightPosition = (modelViewMatrix * vec4(30., -15., 50., 1.)).xyz;
+  vec3 lightVector = normalize(lightPosition - vEyePosition.xyz);
+  vDiffuse = max(dot(vNormal, lightVector), 0.1);
+
+  vec3 lightPosition2 = (modelViewMatrix * vec4(-48., -38., -57., 1.)).xyz;
+  vec3 lightVector2 = normalize(lightPosition2 - vEyePosition.xyz);
+  vDiffuse2 = max(dot(vNormal, lightVector2), 0.1);
+
 }
 `;
 
@@ -50,10 +61,13 @@ in vec4 vWorldPosition;
 in float strength;
 in vec3 vNormal;
 in vec2 vUv;
+in float vDiffuse;
+in float vDiffuse2;
 
 uniform sampler2D text;
 uniform float time;
 uniform float distortion;
+uniform sampler2D matCapMap;
 
 out vec4 color;
 
@@ -85,20 +99,40 @@ vec4 grid( in sampler2D map, in vec2 uv ) {
   return 1.-vec4(smoothstep(size, size + blur, dist_squared));
 }
 
+vec2 matCapUV(in vec3 eye, in vec3 normal) {
+  vec3 r = reflect(eye, normal);
+  float m = 2.82842712474619 * sqrt(r.z + 1.0);
+  vec2 vN = r.xy / m + .5;
+  return vN;
+}
+
 void main() {
   float a = .5 + atan(vWorldPosition.z, vWorldPosition.x) / (2. * M_PI) + time;
   float h = .25 + (vWorldPosition.y+5.) / 30.;
   vec2 tUv = vec2(a,h) + distortion*vNormal.xy;
 //  vec4 t = 1.-texture(text, tUv, 4.);
 
+  vec3 lightColor = vec3(249.,0.,255.)/255.;
+  color = .2*vec4(lightColor * vec3(vDiffuse),1.);
+  vec3 lightColor2 = vec3(0.,170.,255.)/255.;
+  color += .2*vec4(lightColor2 * vec3(vDiffuse2),1.);
+  
   vec4 grid = grid(text, tUv);
-  color = grid;//vec4(vec3(aastep(t.r, vUv)), 1.);//t;//vec4(1.);
+  color += grid;//vec4(vec3(aastep(t.r, vUv)), 1.);//t;//vec4(1.);
+  
+  vec3 n = normalize(vNormal);
+  vec2 vN = matCapUV(normalize(vEyePosition.xyz), n);
+  vec4 c1 = texture(matCapMap, vN);
+  color += c1;
 }
 `;
 
 const loader = new TextureLoader();
 const text = loader.load("./assets/text.png");
 text.wrapS = text.wrapT = RepeatWrapping;
+
+const matcap = loader.load("./assets/matcap.png");
+matcap.wrapS = matcap.wrapT = RepeatWrapping;
 
 class CylinderMaterial extends RawShaderMaterial {
   constructor() {
@@ -107,6 +141,7 @@ class CylinderMaterial extends RawShaderMaterial {
         text: { value: text },
         time: { value: 0 },
         distortion: { value: 0.05 },
+        matCapMap: { value: matcap },
       },
       vertexShader,
       fragmentShader,

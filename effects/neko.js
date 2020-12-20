@@ -220,7 +220,7 @@ class Effect extends glEffectBase {
     this.camera.lookAt(this.scene.position);
 
     const loader = new OBJLoader();
-    loader.load("assets/cylinder.obj", (e) => {
+    loader.load("assets/cylinder2.obj", (e) => {
       this.cylinder.position.y = -5;
       while (e.children.length) {
         const m = e.children[0];
@@ -237,7 +237,7 @@ class Effect extends glEffectBase {
         new BoxBufferGeometry(0.1, 0.1, 0.1),
         new MeshNormalMaterial({ depthTest: false })
       );
-      this.pivot.add(cube);
+      //this.pivot.add(cube);
       this.arm = e.children[0];
       this.arm.position.copy(this.pivot.position).multiplyScalar(-1);
       this.pivot.add(this.arm);
@@ -260,6 +260,7 @@ class Effect extends glEffectBase {
       const height = 20;
       const intensity = 1;
       const rectLight = new RectAreaLight(0xf900ff, intensity, width, height);
+      //rectLight.color.set(0xffffff);
       this.lightBack = rectLight;
       rectLight.position.set(-3, 1.5, -5);
       rectLight.lookAt(0, 0, 0);
@@ -272,6 +273,7 @@ class Effect extends glEffectBase {
       //window.light = pointLight;
 
       const rectLight2 = new RectAreaLight(0x00aaff, intensity, width, height);
+      //rectLight2.color.set(0xffffff);
       rectLight2.position.set(4.8, 3.8, 5.7);
       rectLight2.lookAt(0, 0, 0);
       this.lightFront = rectLight2;
@@ -331,8 +333,8 @@ class Effect extends glEffectBase {
     // return;
     // this.mesh.rotation.x = t;
     // this.mesh.rotation.y = 0.8 * t;
-    // this.renderer.render(this.scene, this.camera);
-    // return;
+    this.renderer.render(this.scene, this.camera);
+    return;
 
     this.renderer.setRenderTarget(this.fbo);
     this.renderer.render(this.scene, this.camera);

@@ -12,7 +12,7 @@ import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
 
 const loader = new TextureLoader();
-const diffuse = loader.load(`./assets/manekineko_light.png`);
+const diffuse = loader.load(`./assets/manekineko_light_AO.png`);
 const dark = loader.load(`./assets/manekineko_dark.png`);
 const normal = loader.load(`./assets/manekineko_light_normal.png`);
 const roughness = loader.load(`./assets/manekineko_light_roughness.png`);
@@ -53,6 +53,7 @@ class NekoMaterial extends MeshStandardMaterial {
       normalScale: new Vector2(0.05, 0.05),
       roughnessMap: roughness,
       envMap: environmentMap,
+      //envMapIntensity: 10,
     };
     super(params);
 
