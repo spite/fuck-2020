@@ -24,6 +24,7 @@ uniform mat4 modelViewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
+uniform vec3 cameraPos;
 
 out vec4 vEyePosition;
 out vec3 vPosition;
@@ -45,9 +46,21 @@ void main() {
   vec3 lightVector = normalize(lightPosition - vEyePosition.xyz);
   vDiffuse = max(dot(vNormal, lightVector), 0.1);
 
+  // float specularReflection = attenuation * vec3(light0.specular) * vec3(mymaterial.specular)
+	// * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)),
+	//       mymaterial.shininess);
+
+  float shininess = 2.;
+  vec3 viewDirection = normalize(cameraPos - vWorldPosition.xyz);
+  float specularReflection = pow(max(0.0, dot(reflect(-lightVector, vNormal), viewDirection)), shininess);
+  vDiffuse += specularReflection;
+
   vec3 lightPosition2 = (modelViewMatrix * vec4(-48., -38., -57., 1.)).xyz;
   vec3 lightVector2 = normalize(lightPosition2 - vEyePosition.xyz);
   vDiffuse2 = max(dot(vNormal, lightVector2), 0.1);
+
+  specularReflection = pow(max(0.0, dot(reflect(-lightVector2, vNormal), viewDirection)), shininess);
+  vDiffuse2 += specularReflection;
 
 }
 `;
@@ -113,9 +126,9 @@ void main() {
 //  vec4 t = 1.-texture(text, tUv, 4.);
 
   vec3 lightColor = vec3(249.,0.,255.)/255.;
-  color = .2*vec4(lightColor * vec3(vDiffuse),1.);
+  color = vec4(lightColor * vec3(vDiffuse),1.);
   vec3 lightColor2 = vec3(0.,170.,255.)/255.;
-  color += .2*vec4(lightColor2 * vec3(vDiffuse2),1.);
+  color += vec4(lightColor2 * vec3(vDiffuse2),1.);
   
   vec4 grid = grid(text, tUv);
   color += grid;//vec4(vec3(aastep(t.r, vUv)), 1.);//t;//vec4(1.);

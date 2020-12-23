@@ -87,7 +87,7 @@ function render(t) {
   intro.cylinderMat.uniforms.distortion.value = params.distortion;
 
   intro.render(audio.currentTime);
-  //composer.render(intro.post.fbo);
+  composer.render(intro.post.fbo);
   requestAnimationFrame(render);
 }
 

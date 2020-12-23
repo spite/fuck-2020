@@ -63,6 +63,8 @@ import { screen } from "../shaders/screen.js";
 import { chromaticAberration } from "../shaders/chromatic-aberration.js";
 import { vignette } from "../shaders/vignette.js";
 
+import { initHdrEnv, scene as lightScene } from "./light-scene.js";
+
 RectAreaLightUniformsLib.init();
 
 const blurShader = new RawShaderMaterial({
@@ -184,7 +186,10 @@ class Effect extends glEffectBase {
     this.blurPasses = [];
     this.levels = 5;
 
+    initHdrEnv(renderer);
+
     this.neko = new Group();
+    //    this.neko.scale.setScalar(4);
 
     for (let i = 0; i < this.levels; i++) {
       const blurPass = new ShaderPingPongPass(this.renderer, blurShader, {
@@ -220,14 +225,15 @@ class Effect extends glEffectBase {
     this.camera.lookAt(this.scene.position);
 
     const loader = new OBJLoader();
-    loader.load("assets/cylinder2.obj", (e) => {
+    loader.load("assets/cylinder3.obj", (e) => {
       this.cylinder.position.y = -5;
       while (e.children.length) {
+        //debugger;
         const m = e.children[0];
         m.material = this.cylinderMat;
         this.cylinder.add(m);
       }
-      this.scene.add(this.cylinder);
+      //this.scene.add(this.cylinder);
     });
 
     loader.load("assets/neko.obj", (e) => {
@@ -251,7 +257,7 @@ class Effect extends glEffectBase {
       this.arm.material = mat;
       this.neko.add(this.pivot);
 
-      this.scene.add(this.neko);
+      //this.scene.add(this.neko);
 
       this.body.castShadow = this.body.receiveShadow = true;
       this.arm.castShadow = this.arm.receiveShadow = true;
@@ -260,7 +266,7 @@ class Effect extends glEffectBase {
       const height = 20;
       const intensity = 1;
       const rectLight = new RectAreaLight(0xf900ff, intensity, width, height);
-      //rectLight.color.set(0xffffff);
+      rectLight.color.set(0xffffff);
       this.lightBack = rectLight;
       rectLight.position.set(-3, 1.5, -5);
       rectLight.lookAt(0, 0, 0);
@@ -273,7 +279,7 @@ class Effect extends glEffectBase {
       //window.light = pointLight;
 
       const rectLight2 = new RectAreaLight(0x00aaff, intensity, width, height);
-      //rectLight2.color.set(0xffffff);
+      rectLight2.color.set(0xffffff);
       rectLight2.position.set(4.8, 3.8, 5.7);
       rectLight2.lookAt(0, 0, 0);
       this.lightFront = rectLight2;
@@ -320,6 +326,9 @@ class Effect extends glEffectBase {
   }
 
   render(t) {
+    for (const obj of this.cylinder.children) {
+      //obj.rotation.z = performance.now() / 10000;
+    }
     this.cylinder.rotation.y = 0.00005 * performance.now();
     this.cylinderMat.uniforms.time.value = 0.00005 * performance.now();
     if (this.pivot) {
@@ -333,11 +342,12 @@ class Effect extends glEffectBase {
     // return;
     // this.mesh.rotation.x = t;
     // this.mesh.rotation.y = 0.8 * t;
-    this.renderer.render(this.scene, this.camera);
-    return;
+    // this.renderer.render(this.scene, this.camera);
+    // return;
 
     this.renderer.setRenderTarget(this.fbo);
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(lightScene, this.camera);
+    //    this.renderer.render(this.scene, this.camera);
     this.renderer.setRenderTarget(null);
 
     this.highlight.render();
