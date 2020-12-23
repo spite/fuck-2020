@@ -120,7 +120,7 @@ void main() {
   bloom += lerpBloomFactor(.4) * texture2D( blur3Tex, vUv );
   bloom += lerpBloomFactor(.2) * texture2D( blur4Tex, vUv );
 
-  gl_FragColor = screen(c,bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
+  gl_FragColor = c;// screen(c,bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
 }
 `;
 
@@ -338,9 +338,9 @@ class Effect extends glEffectBase {
     this.cubeCamera.update(this.renderer, this.scene);
     this.neko.visible = true;
 
-    // this.renderer.render(this.scene, this.camera);
-    // return;
-    // this.mesh.rotation.x = t;
+    this.renderer.render(lightScene, this.camera);
+    return;
+    //this.mesh.rotation.x = t;
     // this.mesh.rotation.y = 0.8 * t;
     // this.renderer.render(this.scene, this.camera);
     // return;

@@ -20,7 +20,7 @@ class glEffectBase extends EffectBase {
       type: canDoFloatLinear() ? FloatType : HalfFloatType,
     });
     this.scene = new Scene();
-    this.camera = new PerspectiveCamera(75, 1, 0.1, 100);
+    this.camera = new PerspectiveCamera(50, 1, 0.1, 100);
   }
 
   setSize(w, h) {

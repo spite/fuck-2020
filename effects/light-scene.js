@@ -50,12 +50,27 @@ const material = new MeshStandardMaterial({
   envMap: environmentMap,
 });
 
+const objects = [
+  { id: "cloud01", x: 7.6, y: 14.817, z: 3.5 },
+  { id: "cloud02", x: -3.75, y: 11.46, z: 6.21 },
+  { id: "cloud03", x: -4.3675, y: 4.16, z: -0.295 },
+  { id: "cloud04", x: 4.6332, y: 5.162, z: -3.057 },
+  { id: "strawberry", x: -4.38, y: 1.5355, z: 2.44 },
+  { id: "heart", x: 3.5981, y: -1.105, z: 2.12 },
+  { id: "star", x: -1.661, y: 0.896, z: 5.465 },
+  { id: "star", x: 3.8574, y: -0.216, z: -1.6077 },
+];
+
 const objLoader = new OBJLoader();
-objLoader.load("assets/star.obj", (e) => {
-  const strawberry = e.children[0];
-  strawberry.material = material;
-  scene.add(strawberry);
-});
+for (const object of objects) {
+  objLoader.load(`assets/${object.id}.obj`, (e) => {
+    const obj = e.children[0];
+    obj.material = material;
+    scene.add(obj);
+    obj.position.set(object.x, object.z, -object.y);
+    obj.lookAt(scene.position);
+  });
+}
 
 const nekoTexture = loader.load("assets/manekineko_light_AO.png");
 nekoTexture.encoding = sRGBEncoding;
@@ -125,7 +140,7 @@ function initHdrEnv(renderer) {
   new RGBELoader()
     //.setDataType(UnsignedByteType)
     .setDataType(FloatType)
-    .setPath("../assets/")
+    .setPath("assets/")
     .load("lythwood_room_2k.hdr", function (texture) {
       radianceMap = pmremGenerator.fromEquirectangular(texture).texture;
       pmremGenerator.dispose();
