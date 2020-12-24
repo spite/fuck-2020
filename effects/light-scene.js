@@ -18,6 +18,8 @@ import {
 } from "../third_party/three.module.js";
 import { OBJLoader } from "../third_party/OBJLoader.js";
 import { RGBELoader } from "../third_party/RGBELoader.js";
+import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
+RectAreaLightUniformsLib.init();
 
 const scene = new Scene();
 
@@ -122,10 +124,6 @@ const light2 = new PointLight(0xff8d00);
 light2.position.set(17, 0, 0);
 scene.add(light2);
 
-// const light3 = new PointLight(0xffffff);
-// light3.position.set(0, 20, 0);
-// scene.add(light3);
-
 const width = 20;
 const height = 20;
 const intensity = 1;
@@ -144,32 +142,9 @@ function initHdrEnv(renderer) {
     .load("lythwood_room_2k.hdr", function (texture) {
       radianceMap = pmremGenerator.fromEquirectangular(texture).texture;
       pmremGenerator.dispose();
-
-      //scene.background = radianceMap;
       material.envMap = radianceMap;
       nekoMat.envMap = radianceMap;
       backdrop.envMap = radianceMap;
-
-      /*const geometry = new THREE.SphereBufferGeometry(0.4, 32, 32);
-
-      for (let x = 0; x <= 10; x++) {
-        for (let y = 0; y <= 2; y++) {
-          const material = new THREE.MeshPhysicalMaterial({
-            roughness: x / 10,
-            metalness: y < 1 ? 1 : 0,
-            color: y < 2 ? 0xffffff : 0x000000,
-            envMap: radianceMap,
-            envMapIntensity: 1,
-          });
-
-          const mesh = new THREE.Mesh(geometry, material);
-          mesh.position.x = x - 5;
-          mesh.position.y = 1 - y;
-          scene.add(mesh);
-        }
-      }*/
-
-      //render();
     });
 
   const pmremGenerator = new PMREMGenerator(renderer);

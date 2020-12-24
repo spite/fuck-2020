@@ -14,12 +14,13 @@ import { settings } from "./js/settings.js";
 const gui = new dat.GUI();
 
 const params = {
-  blurExposure: 0.5,
+  blurExposure: 0.3,
   blurRadius: 1,
   blurStrength: 1,
   aberration: 0.1,
   opacity: 1,
   distortion: 0.05,
+  badness: 0,
 };
 
 const postFolder = gui.addFolder("Post");
@@ -29,6 +30,7 @@ postFolder.add(params, "blurStrength", 0, 2, 0.01);
 postFolder.add(params, "aberration", 0, 1, 0.01);
 postFolder.add(params, "opacity", 0, 1, 0.01);
 postFolder.add(params, "distortion", 0, 0.5, 0.01);
+postFolder.add(params, "badness", 0, 1, 0.01);
 postFolder.open();
 
 const canvas = document.createElement("canvas");
@@ -65,11 +67,11 @@ if (canDoFloatLinear()) {
 const composer = new Composer(renderer, 1, 1);
 
 const effects = [];
-const intro = new NekoEffect(renderer, gui);
+const neko = new NekoEffect(renderer, gui);
 
-effects.push(intro);
+effects.push(neko);
 
-const controls = new OrbitControls(intro.camera, renderer.domElement);
+const controls = new OrbitControls(neko.camera, renderer.domElement);
 controls.screenSpacePanning = true;
 
 const loading = document.querySelector("#loading");
@@ -79,15 +81,17 @@ start.addEventListener("click", () => {
 });
 
 function render(t) {
-  intro.final.shader.uniforms.radius.value = params.blurRadius;
-  intro.blurStrength = params.blurStrength;
-  intro.final.shader.uniforms.exposure.value = params.blurExposure;
-  intro.post.shader.uniforms.opacity.value = params.opacity;
-  intro.post.shader.uniforms.aberration.value = params.aberration;
-  intro.cylinderMat.uniforms.distortion.value = params.distortion;
+  neko.final.shader.uniforms.radius.value = params.blurRadius;
+  neko.blurStrength = params.blurStrength;
+  neko.final.shader.uniforms.exposure.value =
+    params.badness * params.blurExposure;
+  neko.post.shader.uniforms.opacity.value = params.opacity;
+  neko.post.shader.uniforms.aberration.value = params.aberration;
+  neko.badness = params.badness;
+  neko.distortion = params.distortion;
 
-  intro.render(audio.currentTime);
-  //composer.render(intro.post.fbo);
+  neko.render(audio.currentTime);
+  composer.render(neko.post.fbo);
   requestAnimationFrame(render);
 }
 
@@ -101,7 +105,7 @@ function resize() {
   const dPR = window.devicePixelRatio;
   w *= dPR;
   h *= dPR;
-  intro.setSize(w, h);
+  neko.setSize(w, h);
   composer.setSize(w, h);
 }
 

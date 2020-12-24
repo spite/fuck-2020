@@ -26,67 +26,26 @@ diffuse.wrapS = diffuse.wrapT = RepeatWrapping;
 normal.wrapS = normal.wrapT = RepeatWrapping;
 roughness.wrapS = roughness.wrapT = RepeatWrapping;
 
-const cubeTexLoader = new CubeTextureLoader();
-cubeTexLoader.setPath("./assets/");
-const f = "pisa_";
-const ext = "png";
-const environmentMap = cubeTexLoader.load([
-  `${f}posx.${ext}`,
-  `${f}negx.${ext}`,
-  `${f}posy.${ext}`,
-  `${f}negy.${ext}`,
-  `${f}posz.${ext}`,
-  `${f}negz.${ext}`,
-]);
-environmentMap.encoding = sRGBEncoding;
-
 class NekoMaterial extends MeshStandardMaterial {
   constructor() {
     const params = {
-      roughness: 0.52,
+      roughness: 0,
       metalness: 1,
       map: diffuse,
       color: 0xffffff,
       emissive: 0xffffff,
       emissiveMap: dark,
-      normalMap: normal,
-      normalScale: new Vector2(0.05, 0.05),
-      roughnessMap: roughness,
-      envMap: environmentMap,
-      //envMapIntensity: 10,
+      envMap: null,
+      envMapIntensity: 50,
     };
     super(params);
 
-    this.params = params;
-    this.params.badness = 1;
-
-    this.uniforms = {
-      roughness: { value: this.params.roughness },
-      metalness: { value: this.params.metalness },
-      map: { value: this.params.map },
-      envMap: { value: this.params.envMap },
-      normalMap: { value: this.params.normalMap },
-      roughnessMap: { value: this.params.roughnessMap },
-      normalScale: { value: this.params.normalScale },
-      badness: { value: this.params.badness },
-    };
-
     this.onBeforeCompile = (shader, renderer) => {
-      for (const uniformName of Object.keys(this.uniforms)) {
-        shader.uniforms[uniformName] = this.uniforms[uniformName];
-      }
-
-      shader.fragmentShader = shader.fragmentShader.replace(
-        `uniform vec3 emissive;`,
-        `uniform vec3 emissive;
-uniform float badness;`
-      );
-
       shader.fragmentShader = shader.fragmentShader.replace(
         `#include <map_fragment>`,
         `#ifdef USE_MAP
         vec4 texelColor = texture2D( map, vUv );
-        texelColor = mapTexelToLinear( texelColor*(1.-badness) );
+        texelColor = mapTexelToLinear( texelColor*(1.-1.) );
         diffuseColor *= texelColor;
       #endif`
       );
@@ -97,7 +56,7 @@ uniform float badness;`
         vec4 emissiveColor = texture2D( emissiveMap, vUv );
         //emissiveColor -= .1*texture2D( emissiveMap, vUv,8. );
         //emissiveColor *= 0.;
-        emissiveColor.rgb = emissiveMapTexelToLinear( emissiveColor*badness ).rgb;
+        emissiveColor.rgb = emissiveMapTexelToLinear( emissiveColor*1. ).rgb;
         totalEmissiveRadiance *= emissiveColor.rgb;
       #endif`
       );
@@ -105,13 +64,14 @@ uniform float badness;`
       shader.fragmentShader = shader.fragmentShader.replace(
         `#include <dithering_fragment>`,
         `#include <dithering_fragment>
-        gl_FragColor.a = 1.;// 4.*length(emissiveColor.rgb) * badness;`
+        gl_FragColor.a = 1.;// 4.*length(emissiveColor.rgb) * 1.;`
       );
     };
   }
 }
 
 function generateParams(gui, material) {
+  return;
   const params = material.params;
   gui
     .add(params, "roughness", 0, 1)

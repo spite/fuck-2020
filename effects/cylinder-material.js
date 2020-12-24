@@ -8,6 +8,7 @@ import {
   LinearEncoding,
   MeshStandardMaterial,
   RawShaderMaterial,
+  DoubleSide,
 } from "../third_party/three.module.js";
 import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
@@ -126,10 +127,10 @@ void main() {
 //  vec4 t = 1.-texture(text, tUv, 4.);
 
   vec3 lightColor = vec3(249.,0.,255.)/255.;
-  color = vec4(lightColor * vec3(vDiffuse),1.);
+  color = .2*vec4(lightColor * vec3(vDiffuse),1.);
   vec3 lightColor2 = vec3(0.,170.,255.)/255.;
-  color += vec4(lightColor2 * vec3(vDiffuse2),1.);
-  
+  color += .2*vec4(lightColor2 * vec3(vDiffuse2),1.);
+
   vec4 grid = grid(text, tUv);
   color += grid;//vec4(vec3(aastep(t.r, vUv)), 1.);//t;//vec4(1.);
   

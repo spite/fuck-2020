@@ -20,8 +20,6 @@ import {
   RepeatWrapping,
   TextureLoader,
   Group,
-  CubeCamera,
-  WebGLCubeRenderTarget,
   RGBAFormat,
   LinearMipmapLinearFilter,
   TorusBufferGeometry,
@@ -43,12 +41,6 @@ import Maf from "../third_party/Maf.js";
 import { settings } from "../js/settings.js";
 import { canDoFloatLinear } from "../js/features.js";
 import { OBJLoader } from "../third_party/OBJLoader.js";
-import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
-import {
-  NekoMaterial,
-  generateParams as generateNekoParams,
-} from "./neko-material.js";
-import { CylinderMaterial } from "./cylinder-material.js";
 
 import { shader as geoVs } from "../shaders/sdf-geo-vs.js";
 import { shader as geoFs } from "../shaders/sdf-geo-fs.js";
@@ -64,8 +56,7 @@ import { chromaticAberration } from "../shaders/chromatic-aberration.js";
 import { vignette } from "../shaders/vignette.js";
 
 import { initHdrEnv, scene as lightScene } from "./light-scene.js";
-
-RectAreaLightUniformsLib.init();
+import { scene as darkScene, updateEnv, setDistortion } from "./dark-scene.js";
 
 const blurShader = new RawShaderMaterial({
   uniforms: {
@@ -120,7 +111,7 @@ void main() {
   bloom += lerpBloomFactor(.4) * texture2D( blur3Tex, vUv );
   bloom += lerpBloomFactor(.2) * texture2D( blur4Tex, vUv );
 
-  gl_FragColor = c;// screen(c,bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
+  gl_FragColor = screen(c,bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
 }
 `;
 
@@ -173,6 +164,10 @@ const finalShader = new RawShaderMaterial({
 class Effect extends glEffectBase {
   constructor(renderer, gui) {
     super(renderer);
+
+    this.badness = 0;
+    this.distortion = 0;
+
     this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
     this.final = new ShaderPass(this.renderer, shader);
@@ -188,13 +183,10 @@ class Effect extends glEffectBase {
 
     initHdrEnv(renderer);
 
-    this.neko = new Group();
-    //    this.neko.scale.setScalar(4);
-
     for (let i = 0; i < this.levels; i++) {
       const blurPass = new ShaderPingPongPass(this.renderer, blurShader, {
         format: RGBAFormat,
-        type: canDoFloatLinear() ? FloatType : HalfFloatType,
+        //type: canDoFloatLinear() ? FloatType : HalfFloatType,
       });
       this.blurPasses.push(blurPass);
     }
@@ -208,101 +200,10 @@ class Effect extends glEffectBase {
   async initialise() {
     super.initialise();
 
-    this.cylinder = new Group();
-    this.cylinderMat = new CylinderMaterial(); //MeshNormalMaterial({ side: DoubleSide });
-
-    this.cubeRenderTarget = new WebGLCubeRenderTarget(2048, {
-      format: RGBAFormat,
-      //type: canDoFloatLinear() ? FloatType : HalfFloatType,
-      generateMipmaps: true,
-      minFilter: LinearMipmapLinearFilter,
-    });
-
-    this.cubeCamera = new CubeCamera(0.1, 20, this.cubeRenderTarget);
-    this.scene.add(this.cubeCamera);
-
     this.camera.position.set(4, 4, 4);
     this.camera.lookAt(this.scene.position);
 
-    const loader = new OBJLoader();
-    loader.load("assets/cylinder3.obj", (e) => {
-      this.cylinder.position.y = -5;
-      while (e.children.length) {
-        //debugger;
-        const m = e.children[0];
-        m.material = this.cylinderMat;
-        this.cylinder.add(m);
-      }
-      //this.scene.add(this.cylinder);
-    });
-
-    loader.load("assets/neko.obj", (e) => {
-      this.pivot = new Group();
-      this.pivot.position.set(-0.54326, 1.6598, 0);
-      const cube = new Mesh(
-        new BoxBufferGeometry(0.1, 0.1, 0.1),
-        new MeshNormalMaterial({ depthTest: false })
-      );
-      //this.pivot.add(cube);
-      this.arm = e.children[0];
-      this.arm.position.copy(this.pivot.position).multiplyScalar(-1);
-      this.pivot.add(this.arm);
-      this.body = e.children[0];
-      this.neko.add(this.body);
-
-      const mat = new NekoMaterial();
-      generateNekoParams(this.gui, mat);
-      mat.envMap = this.cubeRenderTarget.texture;
-      this.body.material = mat;
-      this.arm.material = mat;
-      this.neko.add(this.pivot);
-
-      //this.scene.add(this.neko);
-
-      this.body.castShadow = this.body.receiveShadow = true;
-      this.arm.castShadow = this.arm.receiveShadow = true;
-
-      const width = 20;
-      const height = 20;
-      const intensity = 1;
-      const rectLight = new RectAreaLight(0xf900ff, intensity, width, height);
-      rectLight.color.set(0xffffff);
-      this.lightBack = rectLight;
-      rectLight.position.set(-3, 1.5, -5);
-      rectLight.lookAt(0, 0, 0);
-      this.scene.add(rectLight);
-
-      const pointLight = new PointLight(0xf900ff);
-      pointLight.position.set(-3, 1.5, -5);
-      pointLight.castShadow = true;
-      //this.scene.add(pointLight);
-      //window.light = pointLight;
-
-      const rectLight2 = new RectAreaLight(0x00aaff, intensity, width, height);
-      rectLight2.color.set(0xffffff);
-      rectLight2.position.set(4.8, 3.8, 5.7);
-      rectLight2.lookAt(0, 0, 0);
-      this.lightFront = rectLight2;
-      this.scene.add(rectLight2);
-
-      const pointLight2 = new PointLight(0x00aaff);
-      pointLight2.position.set(2.4, 1.9, 2.8);
-      pointLight2.castShadow = true;
-      //this.scene.add(pointLight2);
-
-      const spotLight = new SpotLight(0xffffff, 1, 0, 0.394, 0.88, 1);
-      spotLight.position.set(5, 10, 7.5);
-      spotLight.lookAt(this.scene.position);
-      spotLight.castShadow = true;
-      //this.scene.add(spotLight);
-      //const rectLightHelper = new RectAreaLightHelper(rectLight);
-      //this.rectLight.add(rectLightHelper);
-
-      const ambientLight = new AmbientLight(0xb53030, 0.16);
-      //this.scene.add(ambientLight);
-
-      this.renderer.compile(this.scene, this.camera);
-    });
+    this.renderer.compile(this.scene, this.camera);
   }
 
   setSize(w, h) {
@@ -326,28 +227,31 @@ class Effect extends glEffectBase {
   }
 
   render(t) {
-    for (const obj of this.cylinder.children) {
-      //obj.rotation.z = performance.now() / 10000;
-    }
-    this.cylinder.rotation.y = 0.00005 * performance.now();
-    this.cylinderMat.uniforms.time.value = 0.00005 * performance.now();
-    if (this.pivot) {
-      this.pivot.rotation.x += 0.1;
-    }
-    this.neko.visible = false;
-    this.cubeCamera.update(this.renderer, this.scene);
-    this.neko.visible = true;
+    // for (const obj of this.cylinder.children) {
+    //   //obj.rotation.z = performance.now() / 10000;
+    // }
+    // this.cylinder.rotation.y = 0.00005 * performance.now();
+    // this.cylinderMat.uniforms.time.value = 0.00005 * performance.now();
+    // if (this.pivot) {
+    //   this.pivot.rotation.x += 0.1;
+    // }
 
-    this.renderer.render(lightScene, this.camera);
-    return;
+    // this.renderer.render(lightScene, this.camera);
+    // return;
     //this.mesh.rotation.x = t;
     // this.mesh.rotation.y = 0.8 * t;
     // this.renderer.render(this.scene, this.camera);
     // return;
 
+    setDistortion(this.distortion);
+    updateEnv(this.renderer);
+
     this.renderer.setRenderTarget(this.fbo);
-    this.renderer.render(lightScene, this.camera);
-    //    this.renderer.render(this.scene, this.camera);
+    if (this.badness < 0.5) {
+      this.renderer.render(lightScene, this.camera);
+    } else {
+      this.renderer.render(darkScene, this.camera);
+    }
     this.renderer.setRenderTarget(null);
 
     this.highlight.render();
