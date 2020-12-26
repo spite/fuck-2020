@@ -32,7 +32,7 @@ const float max_distort = 2.2;
 const int num_iter = 30;//${settings.chromaticSteps};
 const float reci_num_iter_f = 1.0 / float(num_iter);
 
-vec4 chromaticAberration(sampler2D inputTexture, vec2 uv, float amount) {
+vec4 chromaticAberration(sampler2D inputTexture, vec2 uv, float amount, vec2 dir) {
   vec4 sumcol = vec4(0.0);
   vec4 sumw = vec4(0.0);
   for ( int i=0; i<num_iter;++i )
@@ -40,7 +40,7 @@ vec4 chromaticAberration(sampler2D inputTexture, vec2 uv, float amount) {
     float t = float(i) * reci_num_iter_f;
     vec4 w = spectrum_offset( t );
     sumw += w;
-    sumcol += w * texture2D( inputTexture, barrelDistortion(uv, amount * max_distort*t ) );
+    sumcol += w * texture2D(inputTexture, barrelDistortion(uv, amount * max_distort*t ) );
   }
   return sumcol / sumw;
 }

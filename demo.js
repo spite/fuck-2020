@@ -11,6 +11,8 @@ import * as dat from "./third_party/dat.gui.module.js";
 import { canDoTexLOD, canDoFloatLinear } from "./js/features.js";
 import { settings } from "./js/settings.js";
 
+import { addPromise, loaded as allLoaded } from "./js/loader.js";
+
 const gui = new dat.GUI();
 
 const params = {
@@ -111,20 +113,20 @@ function resize() {
 
 window.addEventListener("resize", resize);
 
+const audioLoaded = addPromise();
 const audio = document.createElement("audio");
 audio.src = "./assets/track.mp3";
 audio.preload = true;
-const audioPromise = new Promise((resolve, reject) => {
-  audio.addEventListener("canplay", (e) => {
-    resolve();
-  });
+audio.addEventListener("canplay", (e) => {
+  audioLoaded();
 });
 
 window.promises = [];
 
 async function init() {
   console.log("Loading...");
-  const preload = []; //[audioPromise];
+  await allLoaded();
+  const preload = [];
   for (const effect of effects) {
     preload.push(effect.initialise());
   }

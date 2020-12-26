@@ -33,6 +33,7 @@ import {
   CubeTextureLoader,
   LinearEncoding,
   DoubleSide,
+  Loader,
 } from "../third_party/three.module.js";
 import { ShaderPass } from "../js/ShaderPass.js";
 import { ShaderPingPongPass } from "../js/ShaderPingPongPass.js";
@@ -40,7 +41,6 @@ import { shader as vertexShader } from "../shaders/ortho-vs.js";
 import Maf from "../third_party/Maf.js";
 import { settings } from "../js/settings.js";
 import { canDoFloatLinear } from "../js/features.js";
-import { OBJLoader } from "../third_party/OBJLoader.js";
 
 import { shader as geoVs } from "../shaders/sdf-geo-vs.js";
 import { shader as geoFs } from "../shaders/sdf-geo-fs.js";
@@ -55,7 +55,11 @@ import { screen } from "../shaders/screen.js";
 import { chromaticAberration } from "../shaders/chromatic-aberration.js";
 import { vignette } from "../shaders/vignette.js";
 
-import { initHdrEnv, scene as lightScene } from "./light-scene.js";
+import {
+  initHdrEnv,
+  scene as lightScene,
+  update as updateLightScene,
+} from "./light-scene.js";
 import { scene as darkScene, updateEnv, setDistortion } from "./dark-scene.js";
 
 const blurShader = new RawShaderMaterial({
@@ -121,6 +125,8 @@ precision highp float;
 uniform sampler2D inputTexture;
 uniform float opacity;
 uniform float aberration;
+uniform sampler2D crackMap;
+uniform vec2 resolution;
 
 varying vec2 vUv;
 
@@ -128,7 +134,8 @@ ${chromaticAberration}
 ${vignette}
 
 void main() {
-  vec4 c = chromaticAberration(inputTexture, vUv, aberration);
+  vec2 dir = (texture2D(crackMap, vUv).xy -.5)/10.;
+  vec4 c = chromaticAberration(inputTexture, vUv, aberration, dir);
   c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
   gl_FragColor = c;
 }
@@ -151,11 +158,15 @@ const shader = new RawShaderMaterial({
   fragmentShader,
 });
 
+const loader = new TextureLoader();
+
 const finalShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
     aberration: { value: 1 },
     opacity: { value: 1 },
+    resolution: { value: new Vector2(1, 1) },
+    crackMap: { value: loader.load("assets/NormalMap.png") },
   },
   vertexShader: orthoVs,
   fragmentShader: finalFs,
@@ -203,7 +214,10 @@ class Effect extends glEffectBase {
     this.camera.position.set(4, 4, 4);
     this.camera.lookAt(this.scene.position);
 
-    this.renderer.compile(this.scene, this.camera);
+    this.badness = 0;
+    this.renderer.compile(lightScene, this.camera);
+    this.badness = 1;
+    this.renderer.compile(darkScene, this.camera);
   }
 
   setSize(w, h) {
@@ -214,6 +228,7 @@ class Effect extends glEffectBase {
     shader.uniforms.resolution.value.set(w, h);
     blurShader.uniforms.resolution.value.set(w, h);
     highlightShader.uniforms.resolution.value.set(w, h);
+    finalShader.uniforms.resolution.value.set(w, h);
 
     let tw = w;
     let th = h;
@@ -248,6 +263,7 @@ class Effect extends glEffectBase {
 
     this.renderer.setRenderTarget(this.fbo);
     if (this.badness < 0.5) {
+      updateLightScene();
       this.renderer.render(lightScene, this.camera);
     } else {
       this.renderer.render(darkScene, this.camera);

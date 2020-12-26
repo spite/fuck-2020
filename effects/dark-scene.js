@@ -24,6 +24,8 @@ import { CylinderMaterial } from "./cylinder-material.js";
 import { NekoMaterial } from "./neko-material.js";
 import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
 RectAreaLightUniformsLib.init();
+import { addPromise } from "../js/loader.js";
+import { loadTexture } from "./loader.js";
 
 const scene = new Scene();
 
@@ -43,6 +45,7 @@ const cubeRenderTarget = new WebGLCubeRenderTarget(2048, {
 const cubeCamera = new CubeCamera(0.1, 20, cubeRenderTarget);
 scene.add(cubeCamera);
 
+const objLoaded = addPromise();
 objLoader.load("assets/cylinder3.obj", (e) => {
   cylinder.position.y = -5;
   while (e.children.length) {
@@ -51,9 +54,10 @@ objLoader.load("assets/cylinder3.obj", (e) => {
     cylinder.add(m);
   }
   scene.add(cylinder);
+  objLoaded();
 });
 
-const nekoTexture = loader.load("assets/manekineko_dark.png");
+const nekoTexture = loadTexture("assets/manekineko_dark.png");
 nekoTexture.encoding = sRGBEncoding;
 
 const nekoMat = new NekoMaterial({

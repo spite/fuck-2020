@@ -12,6 +12,7 @@ import {
 } from "../third_party/three.module.js";
 import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
+import { loadTexture } from "./loader.js";
 
 const vertexShader = `#version 300 es
 precision highp float;
@@ -141,11 +142,10 @@ void main() {
 }
 `;
 
-const loader = new TextureLoader();
-const text = loader.load("./assets/text.png");
+const text = loadTexture("./assets/text.png");
 text.wrapS = text.wrapT = RepeatWrapping;
 
-const matcap = loader.load("./assets/matcap.png");
+const matcap = loadTexture("./assets/matcap.png");
 matcap.wrapS = matcap.wrapT = RepeatWrapping;
 
 class CylinderMaterial extends RawShaderMaterial {

@@ -1,7 +1,6 @@
 import {
   Scene,
   MeshStandardMaterial,
-  TextureLoader,
   PointLight,
   CubeTextureLoader,
   UnsignedByteType,
@@ -16,40 +15,30 @@ import {
   Mesh,
   IcosahedronBufferGeometry,
 } from "../third_party/three.module.js";
-import { OBJLoader } from "../third_party/OBJLoader.js";
 import { RGBELoader } from "../third_party/RGBELoader.js";
+import { sakura } from "./sakura.js";
 import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
 RectAreaLightUniformsLib.init();
+import { addPromise } from "../js/loader.js";
+import { loadTexture, loadObject } from "./loader.js";
 
 const scene = new Scene();
+scene.add(sakura);
 
-const loader = new TextureLoader();
-
-const cubeTexLoader = new CubeTextureLoader();
-cubeTexLoader.setPath("./assets/");
-const f = "pisa_";
-const ext = "png";
-const environmentMap = cubeTexLoader.load([
-  `${f}posx.${ext}`,
-  `${f}negx.${ext}`,
-  `${f}posy.${ext}`,
-  `${f}negy.${ext}`,
-  `${f}posz.${ext}`,
-  `${f}negz.${ext}`,
-]);
-environmentMap.encoding = sRGBEncoding;
-
-const mapTexture = loader.load("assets/props.png");
+const mapTexture = loadTexture("assets/props.png");
 mapTexture.encoding = sRGBEncoding;
+
+const roughnessTexture = loadTexture("assets/props_rough.png");
+const normalTexture = loadTexture("assets/props_normal.png");
 
 const material = new MeshStandardMaterial({
   color: 0xffffff,
   map: mapTexture,
   roughness: 0.52,
   metalness: 0,
-  roughnessMap: loader.load("assets/props_rough.png"),
-  normalMap: loader.load("assets/props_normal.png"),
-  envMap: environmentMap,
+  roughnessMap: roughnessTexture,
+  normalMap: normalTexture,
+  envMap: null,
 });
 
 const objects = [
@@ -63,32 +52,38 @@ const objects = [
   { id: "star", x: 3.8574, y: -0.216, z: -1.6077 },
 ];
 
-const objLoader = new OBJLoader();
+const objectMap = {};
 for (const object of objects) {
-  objLoader.load(`assets/${object.id}.obj`, (e) => {
+  loadObject(`assets/${object.id}.obj`, (e) => {
     const obj = e.children[0];
     obj.material = material;
     scene.add(obj);
     obj.position.set(object.x, object.z, -object.y);
-    obj.lookAt(scene.position);
+    //obj.lookAt(scene.position);
+    objectMap[object.id] = obj;
   });
 }
 
-const nekoTexture = loader.load("assets/manekineko_light_AO.png");
+const nekoTexture = loadTexture("assets/manekineko_light_AO.png");
 nekoTexture.encoding = sRGBEncoding;
+
+const nekoRoughnessTexture = loadTexture(
+  "assets/manekineko_light_roughness.png"
+);
+const nekoNormalTexture = loadTexture("assets/manekineko_light_normal.png");
 
 const nekoMat = new MeshStandardMaterial({
   color: 0xffffff,
   map: nekoTexture,
   roughness: 0.52,
   metalness: 0,
-  roughnessMap: loader.load("assets/manekineko_light_roughness.png"),
-  normalMap: loader.load("assets/manekineko_light_normal.png"),
-  envMap: environmentMap,
+  roughnessMap: nekoRoughnessTexture,
+  normalMap: nekoNormalTexture,
+  envMap: null,
   normalScale: new Vector2(0.05, 0.05),
 });
 
-objLoader.load("assets/neko.obj", (e) => {
+loadObject("assets/neko.obj", (e) => {
   const neko = new Group();
   const pivot = new Group();
   pivot.position.set(-0.54326, 1.6598, 0);
@@ -135,6 +130,7 @@ scene.add(rectLight);
 
 function initHdrEnv(renderer) {
   let radianceMap = null;
+  const loaded = addPromise();
   new RGBELoader()
     //.setDataType(UnsignedByteType)
     .setDataType(FloatType)
@@ -145,9 +141,23 @@ function initHdrEnv(renderer) {
       material.envMap = radianceMap;
       nekoMat.envMap = radianceMap;
       backdrop.envMap = radianceMap;
+      loaded();
     });
 
   const pmremGenerator = new PMREMGenerator(renderer);
   pmremGenerator.compileEquirectangularShader();
 }
-export { scene, initHdrEnv };
+
+function update() {
+  objectMap["strawberry"].rotation.x += 0.0005;
+  objectMap["strawberry"].rotation.y += 0.01;
+  objectMap["strawberry"].rotation.z += 0.00075;
+
+  objectMap["heart"].rotation.x += 0.0005;
+  objectMap["heart"].rotation.y += 0.01;
+  objectMap["heart"].rotation.z += 0.00075;
+
+  sakura.update();
+}
+
+export { scene, initHdrEnv, update };
