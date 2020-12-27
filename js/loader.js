@@ -1,7 +1,22 @@
+import { TextureLoader } from "../third_party/three.module.js";
+import { OBJLoader } from "../third_party/OBJLoader.js";
+import { GLTFLoader } from "../third_party/GLTFLoader.js";
+import { ColladaLoader } from "../third_party/ColladaLoader.js";
+
 const queue = [];
+let total = 0;
+let itemsLoaded = 0;
+let onProgressFn = null;
+
+function onProgress(fn) {
+  onProgressFn = fn;
+}
 
 function progress() {
-  //console.log("resolve", queue);
+  itemsLoaded++;
+  if (onProgressFn) {
+    onProgressFn((itemsLoaded * 100) / total);
+  }
 }
 
 function addPromise() {
@@ -12,6 +27,7 @@ function addPromise() {
     progress();
   });
   queue.push(p);
+  total++;
   return fn;
 }
 
@@ -19,4 +35,67 @@ function loaded() {
   return Promise.all(queue);
 }
 
-export { addPromise, loaded };
+const loader = new TextureLoader();
+
+function loadTexture(file) {
+  const resolve = addPromise();
+  const tex = loader.load(file, () => {
+    resolve();
+  });
+  return tex;
+}
+
+const objLoader = new OBJLoader();
+
+function loadObject(file, callback) {
+  const resolve = addPromise();
+  objLoader.load(file, (e) => {
+    callback(e);
+    resolve();
+  });
+}
+
+const gltfLoader = new GLTFLoader();
+
+function loadGLTF(file, callback) {
+  const resolve = addPromise();
+  gltfLoader.load(file, (e) => {
+    callback(e);
+    resolve();
+  });
+}
+
+const colladaLoader = new ColladaLoader();
+
+function loadDAE(file, callback) {
+  const resolve = addPromise();
+  colladaLoader.load(file, (e) => {
+    callback(e.scene);
+    resolve();
+  });
+}
+
+function loadAudio(file, callback) {
+  const resolve = addPromise();
+  const audio = document.createElement("audio");
+  audio.src = file;
+  audio.preload = true;
+  audio.addEventListener("canplay", (e) => {
+    if (callback) {
+      callback(e);
+    }
+    resolve();
+  });
+  return audio;
+}
+
+export {
+  addPromise,
+  loadTexture,
+  loadObject,
+  loadGLTF,
+  loadDAE,
+  loadAudio,
+  loaded,
+  onProgress,
+};

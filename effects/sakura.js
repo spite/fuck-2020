@@ -1,4 +1,3 @@
-import { OBJLoader } from "../third_party/OBJLoader.js";
 import {
   DynamicDrawUsage,
   Group,
@@ -9,7 +8,7 @@ import {
   Vector3,
   DoubleSide,
 } from "../third_party/three.module.js";
-import { addPromise } from "../js/loader.js";
+import { loadObject } from "../js/loader.js";
 
 const sakuraVS = `#version 300 es
 precision highp float;
@@ -43,16 +42,13 @@ void main() {
 
 }`;
 
-const loaded = addPromise();
-
-const objLoader = new OBJLoader();
 const count = 1000;
 const dummy = new Object3D();
 
 class Sakura extends Group {
   constructor() {
     super();
-    objLoader.load("assets/cherry_blossom.obj", (e) => {
+    loadObject("assets/cherry_blossom.obj", (e) => {
       const geometry = e.children[0].geometry;
 
       const material = new RawShaderMaterial({
@@ -66,7 +62,6 @@ class Sakura extends Group {
       this.add(mesh);
       this.mesh = mesh;
       this.init();
-      loaded();
     });
   }
 

@@ -16,8 +16,7 @@ import { RGBELoader } from "../third_party/RGBELoader.js";
 import { sakura } from "./sakura.js";
 import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
 RectAreaLightUniformsLib.init();
-import { addPromise } from "../js/loader.js";
-import { loadTexture, loadObject } from "./loader.js";
+import { addPromise, loadTexture, loadObject } from "../js/loader.js";
 
 const scene = new Scene();
 scene.add(sakura);

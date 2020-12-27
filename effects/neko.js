@@ -23,7 +23,7 @@ import { shader as blurFs } from "../shaders/blur-fs.js";
 import { screen } from "../shaders/screen.js";
 import { chromaticAberration } from "../shaders/chromatic-aberration.js";
 import { vignette } from "../shaders/vignette.js";
-import { loadTexture } from "./loader.js";
+import { loadTexture } from "../js/loader.js";
 import { events } from "./data.js";
 
 import {

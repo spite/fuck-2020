@@ -20,7 +20,7 @@ import { CylinderMaterial } from "./cylinder-material.js";
 import { NekoMaterial } from "./neko-material.js";
 import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
 RectAreaLightUniformsLib.init();
-import { loadTexture, loadObject, loadDAE } from "./loader.js";
+import { loadTexture, loadObject, loadDAE } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
 import { renderText, renderTarget as textRenderTarget } from "./text.js";
 
@@ -32,6 +32,7 @@ const plane = new Mesh(
     color: 0xffffff,
     alphaMap: textRenderTarget.texture,
     transparent: true,
+    side: DoubleSide,
   })
 );
 plane.position.z = 2;

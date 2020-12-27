@@ -1,7 +1,6 @@
 import {
   WebGLRenderer,
   sRGBEncoding,
-  AnimationMixer,
   PerspectiveCamera,
   ACESFilmicToneMapping,
 } from "./third_party/three.module.js";
@@ -11,8 +10,7 @@ import { Composer } from "./js/Composer.js";
 import * as dat from "./third_party/dat.gui.module.js";
 import { settings } from "./js/settings.js";
 
-import { addPromise, loaded as allLoaded, loaded } from "./js/loader.js";
-import { loadDAE, loadGLTF } from "./effects/loader.js";
+import { loadAudio, loaded as allLoaded, onProgress } from "./js/loader.js";
 
 const camera = new PerspectiveCamera(50, 1, 0.1, 100);
 
@@ -133,15 +131,11 @@ function resize() {
 
 window.addEventListener("resize", resize);
 
-const audioLoaded = addPromise();
-const audio = document.createElement("audio");
-audio.src = "./assets/track.mp3";
-audio.preload = true;
-audio.addEventListener("canplay", (e) => {
-  audioLoaded();
-});
+const audio = loadAudio("assets/track.mp3");
 
-window.promises = [];
+onProgress((progress) => {
+  loading.textContent = `Loading ${progress.toFixed(0)}%`;
+});
 
 async function init() {
   console.log("Loading...");

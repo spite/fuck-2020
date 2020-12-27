@@ -2,7 +2,7 @@ import {
   RepeatWrapping,
   RawShaderMaterial,
 } from "../third_party/three.module.js";
-import { loadTexture } from "./loader.js";
+import { loadTexture } from "../js/loader.js";
 
 const vertexShader = `#version 300 es
 precision highp float;
