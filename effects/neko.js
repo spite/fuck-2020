@@ -1,39 +1,8 @@
 import { glEffectBase } from "../js/glEffectBase.js";
 import {
-  PointLight,
-  Mesh,
-  MeshStandardMaterial,
   Vector2,
-  Object3D,
-  Matrix4,
-  CylinderBufferGeometry,
-  BoxBufferGeometry,
-  BufferAttribute,
-  MeshNormalMaterial,
   RawShaderMaterial,
-  Vector3,
-  Vector4,
-  MeshBasicMaterial,
-  IcosahedronBufferGeometry,
-  RectAreaLight,
-  ClampToEdgeWrapping,
-  RepeatWrapping,
-  TextureLoader,
-  Group,
   RGBAFormat,
-  LinearMipmapLinearFilter,
-  TorusBufferGeometry,
-  Color,
-  FloatType,
-  HalfFloatType,
-  UnsignedByteType,
-  SpotLight,
-  AmbientLight,
-  sRGBEncoding,
-  CubeTextureLoader,
-  LinearEncoding,
-  DoubleSide,
-  Loader,
 } from "../third_party/three.module.js";
 import { ShaderPass } from "../js/ShaderPass.js";
 import { ShaderPingPongPass } from "../js/ShaderPingPongPass.js";
@@ -54,13 +23,21 @@ import { shader as blurFs } from "../shaders/blur-fs.js";
 import { screen } from "../shaders/screen.js";
 import { chromaticAberration } from "../shaders/chromatic-aberration.js";
 import { vignette } from "../shaders/vignette.js";
+import { loadTexture } from "./loader.js";
+import { events } from "./data.js";
 
 import {
   initHdrEnv,
   scene as lightScene,
   update as updateLightScene,
 } from "./light-scene.js";
-import { scene as darkScene, updateEnv, setDistortion } from "./dark-scene.js";
+import {
+  scene as darkScene,
+  updateEnv,
+  setDistortion,
+  setExplosion,
+  setText,
+} from "./dark-scene.js";
 
 const blurShader = new RawShaderMaterial({
   uniforms: {
@@ -158,15 +135,13 @@ const shader = new RawShaderMaterial({
   fragmentShader,
 });
 
-const loader = new TextureLoader();
-
 const finalShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
     aberration: { value: 1 },
     opacity: { value: 1 },
     resolution: { value: new Vector2(1, 1) },
-    crackMap: { value: loader.load("assets/NormalMap.png") },
+    crackMap: { value: loadTexture("assets/NormalMap.png") },
   },
   vertexShader: orthoVs,
   fragmentShader: finalFs,
@@ -178,6 +153,7 @@ class Effect extends glEffectBase {
 
     this.badness = 0;
     this.distortion = 0;
+    this.explosion = 0;
 
     this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
@@ -214,10 +190,12 @@ class Effect extends glEffectBase {
     this.camera.position.set(4, 4, 4);
     this.camera.lookAt(this.scene.position);
 
-    this.badness = 0;
     this.renderer.compile(lightScene, this.camera);
-    this.badness = 1;
     this.renderer.compile(darkScene, this.camera);
+    this.badness = 0;
+    this.render(0, this.camera);
+    this.badness = 1;
+    this.render(1, this.camera);
   }
 
   setSize(w, h) {
@@ -241,7 +219,7 @@ class Effect extends glEffectBase {
     }
   }
 
-  render(t) {
+  render(t, camera) {
     // for (const obj of this.cylinder.children) {
     //   //obj.rotation.z = performance.now() / 10000;
     // }
@@ -258,7 +236,11 @@ class Effect extends glEffectBase {
     // this.renderer.render(this.scene, this.camera);
     // return;
 
+    if (this.badness >= 0.5) {
+      setText(this.renderer, events[Math.floor(Math.random() * events.length)]);
+    }
     setDistortion(this.distortion);
+    setExplosion(this.explosion);
     updateEnv(this.renderer);
 
     this.renderer.setRenderTarget(this.fbo);

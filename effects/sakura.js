@@ -1,14 +1,11 @@
 import { OBJLoader } from "../third_party/OBJLoader.js";
 import {
-  TextureLoader,
   DynamicDrawUsage,
   Group,
   Object3D,
   InstancedMesh,
-  MeshNormalMaterial,
   RawShaderMaterial,
   Quaternion,
-  Vector2,
   Vector3,
   DoubleSide,
 } from "../third_party/three.module.js";

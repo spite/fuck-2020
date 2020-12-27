@@ -1,7 +1,7 @@
 const queue = [];
 
 function progress() {
-  console.log("resolve", queue);
+  //console.log("resolve", queue);
 }
 
 function addPromise() {
@@ -12,7 +12,6 @@ function addPromise() {
     progress();
   });
   queue.push(p);
-  console.log(queue);
   return fn;
 }
 

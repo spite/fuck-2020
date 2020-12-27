@@ -1,17 +1,7 @@
 import {
-  Vector2,
   RepeatWrapping,
-  TextureLoader,
-  Color,
-  sRGBEncoding,
-  CubeTextureLoader,
-  LinearEncoding,
-  MeshStandardMaterial,
   RawShaderMaterial,
-  DoubleSide,
 } from "../third_party/three.module.js";
-import Maf from "../third_party/Maf.js";
-import Easings from "../third_party/easings.js";
 import { loadTexture } from "./loader.js";
 
 const vertexShader = `#version 300 es
@@ -47,10 +37,6 @@ void main() {
   vec3 lightPosition = (modelViewMatrix * vec4(30., -15., 50., 1.)).xyz;
   vec3 lightVector = normalize(lightPosition - vEyePosition.xyz);
   vDiffuse = max(dot(vNormal, lightVector), 0.1);
-
-  // float specularReflection = attenuation * vec3(light0.specular) * vec3(mymaterial.specular)
-	// * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)),
-	//       mymaterial.shininess);
 
   float shininess = 2.;
   vec3 viewDirection = normalize(cameraPos - vWorldPosition.xyz);
@@ -105,7 +91,7 @@ vec4 grid( in sampler2D map, in vec2 uv ) {
   vec2 res = vec2(1024.,256.);
   float spacing = 3.;
   vec2 nuv = floor(uv*res/spacing)*spacing/res;
-  float s = 1.-texture(map, nuv).r;
+  float s = texture(map, nuv).r;
   float w = 2.;
   float size = (spacing-w) * s;
   float blur = w * s;
@@ -125,7 +111,6 @@ void main() {
   float a = .5 + atan(vWorldPosition.z, vWorldPosition.x) / (2. * M_PI) + time;
   float h = .25 + (vWorldPosition.y+5.) / 30.;
   vec2 tUv = vec2(a,h) + distortion*vNormal.xy;
-//  vec4 t = 1.-texture(text, tUv, 4.);
 
   vec3 lightColor = vec3(249.,0.,255.)/255.;
   color = .2*vec4(lightColor * vec3(vDiffuse),1.);
@@ -142,9 +127,6 @@ void main() {
 }
 `;
 
-const text = loadTexture("./assets/text.png");
-text.wrapS = text.wrapT = RepeatWrapping;
-
 const matcap = loadTexture("./assets/matcap.png");
 matcap.wrapS = matcap.wrapT = RepeatWrapping;
 
@@ -152,7 +134,7 @@ class CylinderMaterial extends RawShaderMaterial {
   constructor() {
     super({
       uniforms: {
-        text: { value: text },
+        text: { value: null },
         time: { value: 0 },
         distortion: { value: 0.05 },
         matCapMap: { value: matcap },

@@ -1,10 +1,7 @@
 import {
-  Vector2,
   RepeatWrapping,
   TextureLoader,
-  Color,
   sRGBEncoding,
-  CubeTextureLoader,
   LinearEncoding,
   MeshStandardMaterial,
 } from "../third_party/three.module.js";

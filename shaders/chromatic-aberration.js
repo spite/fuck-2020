@@ -29,7 +29,7 @@ vec4 spectrum_offset( float t ) {
 }
 
 const float max_distort = 2.2;
-const int num_iter = 30;//${settings.chromaticSteps};
+const int num_iter = ${settings.chromaticSteps};
 const float reci_num_iter_f = 1.0 / float(num_iter);
 
 vec4 chromaticAberration(sampler2D inputTexture, vec2 uv, float amount, vec2 dir) {
