@@ -1,19 +1,19 @@
-const shader = `
+const shader = `#version 300 es
 precision highp float;
 
-attribute vec3 position;
-attribute vec2 uv;
+in vec3 position;
+in vec2 uv;
 
 uniform vec2 resolution;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
-varying vec2 vUv;
-varying vec2 v_rgbNW;
-varying vec2 v_rgbNE;
-varying vec2 v_rgbSW;
-varying vec2 v_rgbSE;
-varying vec2 v_rgbM;
+out vec2 vUv;
+out vec2 v_rgbNW;
+out vec2 v_rgbNE;
+out vec2 v_rgbSW;
+out vec2 v_rgbSE;
+out vec2 v_rgbM;
 
 void main() {
   vUv = uv;

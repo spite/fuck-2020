@@ -1,14 +1,15 @@
-const shader = `
+const shader = `#version 300 es
 precision highp float;
 
-uniform vec2 resolution;
 uniform sampler2D inputTexture;
 uniform vec2 direction;
 
-varying vec2 vUv;
+in vec2 vUv;
+
+out vec4 color;
 
 void main() {
-  vec4 c = texture2D(inputTexture, vUv);
+  vec4 c = texture(inputTexture, vUv);
   c.rgb *=  c.a;//clamp(c.rgb - reduction, vec3(0.), vec3(1.)) / reduction;
   c.a = 1.;
   // vec3 luma = vec3(0.299, 0.587, 0.114);
@@ -23,7 +24,7 @@ void main() {
   // l /= (1.-factor);
   // c.a = 1.;
   // c.rgb *= vec3(l);
-  gl_FragColor = c;
+  color = c;
 }`;
 
 export { shader };

@@ -3,6 +3,7 @@ import {
   sRGBEncoding,
   PerspectiveCamera,
   ACESFilmicToneMapping,
+  Vector3,
 } from "./third_party/three.module.js";
 import { OrbitControls } from "./third_party/OrbitControls.js";
 import { Effect as NekoEffect } from "./effects/neko.js";
@@ -11,39 +12,11 @@ import * as dat from "./third_party/dat.gui.module.js";
 import { settings } from "./js/settings.js";
 
 import { loadAudio, loaded as allLoaded, onProgress } from "./js/loader.js";
+import { moveToKeyframe } from "./js/paths.js";
 
 const camera = new PerspectiveCamera(50, 1, 0.1, 100);
 
-// async function loadPath(file, callback) {
-//   const res = await fetch(file);
-//   const xmlStr = await res.text();
-//   const parser = new DOMParser();
-//   const dom = parser.parseFromString(xmlStr, "application/xml");
-//   debugger;
-// }
-
-// loadPath("assets/camera_test.dae", (e) => {
-//   debugger;
-// });
 const gui = new dat.GUI();
-
-// function keyframe(t) {
-//   const step = Math.floor((t * 100) / animation.duration) % 100;
-//   const positions = animation.tracks[0].values;
-//   const x = positions[3 * step];
-//   const y = positions[3 * step + 1];
-//   const z = positions[3 * step + 2];
-//   const rotations = animation.tracks[1].values;
-//   const qx = rotations[4 * step];
-//   const qy = rotations[4 * step + 1];
-//   const qz = rotations[4 * step + 2];
-//   const qw = rotations[4 * step + 3];
-//   console.log(qx, qy, qz, qw);
-//   camera.quaternion.set(qx, qy, qz, qw);
-//   // const steps = animation.tracks[-]
-//   // const step = t * steps * animation.duration;
-//   // const keyframe = animation[step];
-// }
 
 const params = {
   blurExposure: 0.3,
@@ -89,7 +62,10 @@ const neko = new NekoEffect(renderer, gui);
 
 effects.push(neko);
 
-const controls = new OrbitControls(neko.camera, renderer.domElement);
+camera.position.set(4, 4, 4);
+camera.lookAt(new Vector3(0, 0, 0));
+
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.screenSpacePanning = true;
 
 const loading = document.querySelector("#loading");
@@ -100,6 +76,8 @@ start.addEventListener("click", () => {
 
 function render(t) {
   //keyframe(audio.currentTime);
+  //moveToKeyframe(null, camera, performance.now() / 1000);
+
   neko.final.shader.uniforms.radius.value = params.blurRadius;
   neko.blurStrength = params.blurStrength;
   neko.final.shader.uniforms.exposure.value =
@@ -110,7 +88,9 @@ function render(t) {
   neko.distortion = params.distortion;
   neko.explosion = params.explosion;
 
-  neko.render(audio.currentTime, camera);
+  //const t= audio.currentTime;
+  const et = performance.now() / 1000;
+  neko.render(et, camera);
   composer.render(neko.post.fbo);
   requestAnimationFrame(render);
 }
@@ -122,6 +102,8 @@ function resize() {
   renderer.domElement.style.width = "100%";
   renderer.domElement.style.height = "100%";
 
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
   const dPR = window.devicePixelRatio;
   w *= dPR;
   h *= dPR;
@@ -140,16 +122,19 @@ onProgress((progress) => {
 async function init() {
   console.log("Loading...");
   await allLoaded();
-  const preload = [];
-  for (const effect of effects) {
-    preload.push(effect.initialise());
-  }
-  await Promise.all(preload);
-  resize();
-  loading.style.display = "none";
-  start.style.display = "flex";
-  console.log("Ready...");
-  run();
+  console.log("All loaded");
+  setTimeout(async () => {
+    const preload = [];
+    for (const effect of effects) {
+      preload.push(effect.initialise());
+    }
+    await Promise.all(preload);
+    resize();
+    loading.style.display = "none";
+    start.style.display = "flex";
+    console.log("Ready...");
+    run();
+  }, 100);
 }
 
 function run() {

@@ -8,6 +8,11 @@
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
     <style>
+      @font-face {
+        font-family: "ultra";
+        src: url("assets/iCiel Ultra.ttf");
+      }
+
       * {
         box-sizing: border-box;
         padding: 0;
@@ -35,6 +40,8 @@
         justify-content: center;
         place-items: center;
         display: flex;
+        font-family: ultra;
+        text-transform: uppercase;
       }
       #loading {
         pointer-events: none;
@@ -47,16 +54,12 @@
         z-index: 10 !important;
       }
     </style>
-    <link
-      href="https://fonts.googleapis.com/css?family=Krona+One|Open+Sans"
-      rel="stylesheet"
-    />
   </head>
 
   <body>
     <div class="overlay" id="loading">Loading...</div>
     <div class="overlay" id="start">Start</div>
     <!--<script src="js/CCapture.all.min.js"></script>-->
-    <script async type="module" src="bundle.js"></script>
+    <script async type="module" src="demo.js"></script>
   </body>
 </html>

@@ -12,8 +12,6 @@ import {
   RectAreaLight,
   Mesh,
   IcosahedronBufferGeometry,
-  PlaneBufferGeometry,
-  MeshBasicMaterial,
   DoubleSide,
 } from "../third_party/three.module.js";
 import { CylinderMaterial } from "./cylinder-material.js";
@@ -22,25 +20,19 @@ import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLi
 RectAreaLightUniformsLib.init();
 import { loadTexture, loadObject, loadDAE } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
-import { renderText, renderTarget as textRenderTarget } from "./text.js";
+import { Text } from "./text.js";
+import { plane as banner } from "./dark-banner.js";
+import Easings from "../third_party/easings.js";
 
 const scene = new Scene();
+const textRender = new Text("ultra");
 
-const plane = new Mesh(
-  new PlaneBufferGeometry(2048 / 100, 512 / 100),
-  new MeshBasicMaterial({
-    color: 0xffffff,
-    alphaMap: textRenderTarget.texture,
-    transparent: true,
-    side: DoubleSide,
-  })
-);
-plane.position.z = 2;
-scene.add(plane);
+scene.add(banner);
+banner.material.uniforms.text.value = textRender.renderTarget.texture;
 
 const cylinder = new Group();
 const cylinderMat = new CylinderMaterial();
-cylinderMat.uniforms.text.value = textRenderTarget;
+cylinderMat.uniforms.text.value = textRender.renderTarget.texture;
 
 const cubeRenderTarget = new WebGLCubeRenderTarget(4096, {
   format: RGBAFormat,
@@ -109,8 +101,8 @@ loadDAE("assets/neko_fracture.dae", (e) => {
   scene.add(nekoFracture);
 });
 
+const pivot = new Group();
 loadObject("assets/neko.obj", (e) => {
-  const pivot = new Group();
   pivot.position.set(-0.54326, 1.6598, 0);
   const arm = e.children[0];
   arm.position.copy(pivot.position).multiplyScalar(-1);
@@ -189,9 +181,20 @@ function setExplosion(t) {
 let previousText = "";
 function setText(renderer, text) {
   if (text !== previousText) {
-    renderText(renderer, text);
+    textRender.render(renderer, text);
     previousText = text;
   }
 }
 
-export { scene, updateEnv, setDistortion, setExplosion, setText };
+function update(t) {
+  const d = 1.254;
+  const tt = (t % d) / d;
+  const v = Easings.InOutQuint(Maf.parabola(tt, 4));
+  pivot.rotation.x = Maf.mix(0, Math.PI / 2, v);
+}
+
+function init(renderer, camera) {
+  renderer.compile(scene, camera);
+}
+
+export { scene, init, updateEnv, setDistortion, setExplosion, setText, update };

@@ -11,12 +11,6 @@ import Maf from "../third_party/Maf.js";
 import { settings } from "../js/settings.js";
 import { canDoFloatLinear } from "../js/features.js";
 
-import { shader as geoVs } from "../shaders/sdf-geo-vs.js";
-import { shader as geoFs } from "../shaders/sdf-geo-fs.js";
-
-import { shader as neonVs } from "../shaders/neon-vs.js";
-import { shader as neonFs } from "../shaders/neon-fs.js";
-
 import { shader as orthoVs } from "../shaders/ortho-vs.js";
 import { shader as highlightFs } from "../shaders/highlight-fs.js";
 import { shader as blurFs } from "../shaders/blur-fs.js";
@@ -30,6 +24,7 @@ import {
   initHdrEnv,
   scene as lightScene,
   update as updateLightScene,
+  init as initLightScene,
 } from "./light-scene.js";
 import {
   scene as darkScene,
@@ -37,12 +32,13 @@ import {
   setDistortion,
   setExplosion,
   setText,
+  init as initDarkScene,
+  update as updateDarkScene,
 } from "./dark-scene.js";
 
 const blurShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
-    resolution: { value: new Vector2(1, 1) },
     direction: { value: new Vector2(0, 1) },
   },
   vertexShader: orthoVs,
@@ -52,14 +48,13 @@ const blurShader = new RawShaderMaterial({
 const highlightShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
-    resolution: { value: new Vector2(1, 1) },
     direction: { value: new Vector2(0, 1) },
   },
   vertexShader: orthoVs,
   fragmentShader: highlightFs,
 });
 
-const fragmentShader = `
+const fragmentShader = `#version 300 es
 precision highp float;
 
 uniform sampler2D fbo;
@@ -74,7 +69,9 @@ uniform float radius;
 uniform float strength;
 uniform float exposure;
 
-varying vec2 vUv;
+in vec2 vUv;
+
+out vec4 color;
 
 float lerpBloomFactor(float v) {
   return mix(v, 1.2 - v, radius);
@@ -83,38 +80,144 @@ float lerpBloomFactor(float v) {
 ${screen}
 
 void main() {
-  vec4 c = texture2D(fbo, vUv);
+  vec4 c = texture(fbo, vUv);
 
   vec4 bloom = vec4(0.);
-  bloom += lerpBloomFactor(1.) * texture2D( blur0Tex, vUv );
-  bloom += lerpBloomFactor(.8) * texture2D( blur1Tex, vUv );
-  bloom += lerpBloomFactor(.6) * texture2D( blur2Tex, vUv );
-  bloom += lerpBloomFactor(.4) * texture2D( blur3Tex, vUv );
-  bloom += lerpBloomFactor(.2) * texture2D( blur4Tex, vUv );
+  bloom += lerpBloomFactor(1.) * texture( blur0Tex, vUv );
+  bloom += lerpBloomFactor(.8) * texture( blur1Tex, vUv );
+  bloom += lerpBloomFactor(.6) * texture( blur2Tex, vUv );
+  bloom += lerpBloomFactor(.4) * texture( blur3Tex, vUv );
+  bloom += lerpBloomFactor(.2) * texture( blur4Tex, vUv );
 
-  gl_FragColor = screen(c,bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
+  color = screen(c,bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
 }
 `;
 
-const finalFs = `
+const finalFs = `#version 300 es
 precision highp float;
 
 uniform sampler2D inputTexture;
 uniform float opacity;
 uniform float aberration;
 uniform sampler2D crackMap;
-uniform vec2 resolution;
 
-varying vec2 vUv;
+in vec2 vUv;
+
+out vec4 color;
 
 ${chromaticAberration}
 ${vignette}
 
 void main() {
-  vec2 dir = (texture2D(crackMap, vUv).xy -.5)/10.;
+  vec2 dir = vec2(0.);// (texture(crackMap, vUv).xy -.5)/10.;
   vec4 c = chromaticAberration(inputTexture, vUv, aberration, dir);
   c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
-  gl_FragColor = c;
+  color = c;
+}
+`;
+
+// https://github.com/felixturner/bad-tv-shader/blob/master/BadTVShader.js
+
+const glitchFs = `#version 300 es
+precision highp float;
+
+uniform sampler2D inputTexture;
+uniform float time;
+uniform float distortion;
+uniform float distortion2;
+uniform float speed;
+uniform float rollSpeed;
+
+in vec2 vUv;
+
+out vec4 color;
+
+// Start Ashima 2D Simplex Noise
+
+vec3 mod289(vec3 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec2 mod289(vec2 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec3 permute(vec3 x) {
+  return mod289(((x*34.0)+1.0)*x);
+}
+
+float snoise(vec2 v) {
+  const vec4 C = vec4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
+                      0.366025403784439,  // 0.5*(sqrt(3.0)-1.0)
+                     -0.577350269189626,  // -1.0 + 2.0 * C.x
+                      0.024390243902439); // 1.0 / 41.0
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+
+  i = mod289(i); // Avoid truncation effects in permutation
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+		+ i.x + vec3(0.0, i1.x, 1.0 ));
+
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+// End Ashima 2D Simplex Noise
+
+vec4 glitch(in sampler2D map, in vec2 uv, in float time, in float speed, in float distortion, in float distortion2, in float rollSpeed ) {
+  vec2 p = vUv;
+  float ty = time*speed;
+  float yt = p.y - ty;
+  //smooth distortion
+  float offset = snoise(vec2(yt*3.0,0.0))*0.2;
+  // boost distortion
+  offset = offset*distortion * offset*distortion * offset;
+  //add fine grain distortion
+  offset += snoise(vec2(yt*50.0,0.0))*distortion2*0.001;
+  //combine distortion on X with roll on Y
+  return texture(inputTexture,  vec2(fract(p.x + offset),fract(p.y-time*rollSpeed) ));
+}
+
+// https://www.shadertoy.com/view/tsX3RN
+
+float maxStrength = 0.65;
+float minStrength = 0.45;
+float staticSpeed = 10.00;
+
+float random (vec2 noise){
+  return fract(sin(dot(noise.xy,vec2(10.998,98.233)))*12433.14159265359);
+}
+
+float noise(in vec2 uv, in float time) {
+  vec2 resolution = vec2(textureSize(inputTexture,0));
+  vec2 uv2 = fract(uv*fract(sin(time*staticSpeed)));
+  
+  maxStrength = clamp(sin(time/2.0),minStrength,maxStrength);
+  return random(uv2.xy)*maxStrength;
+}
+
+void main() {
+  float n = noise(vUv, time/100.);
+  n = smoothstep(0., maxStrength, n);
+  color = texture(inputTexture,vUv);//glitch(inputTexture, vUv, time, speed, distortion, distortion2, rollSpeed) * vec4(n);
 }
 `;
 
@@ -126,7 +229,6 @@ const shader = new RawShaderMaterial({
     blur2Tex: { value: null },
     blur3Tex: { value: null },
     blur4Tex: { value: null },
-    resolution: { value: new Vector2(1, 1) },
     radius: { value: 1 },
     strength: { value: 1 },
     exposure: { value: 0 },
@@ -135,12 +237,24 @@ const shader = new RawShaderMaterial({
   fragmentShader,
 });
 
+const glitchShader = new RawShaderMaterial({
+  uniforms: {
+    inputTexture: { value: null },
+    time: { value: 0 },
+    speed: { value: 0.2 },
+    rollSpeed: { value: 0 },
+    distortion: { value: 0 },
+    distortion2: { value: 0 },
+  },
+  vertexShader: orthoVs,
+  fragmentShader: glitchFs,
+});
+
 const finalShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
     aberration: { value: 1 },
     opacity: { value: 1 },
-    resolution: { value: new Vector2(1, 1) },
     crackMap: { value: loadTexture("assets/NormalMap.png") },
   },
   vertexShader: orthoVs,
@@ -157,12 +271,14 @@ class Effect extends glEffectBase {
 
     this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
+    this.glitch = new ShaderPass(this.renderer, glitchShader);
     this.final = new ShaderPass(this.renderer, shader);
     this.post.shader.uniforms.inputTexture.value = this.final.fbo.texture;
 
+    glitchShader.uniforms.inputTexture.value = this.fbo.texture;
     this.highlight = new ShaderPass(this.renderer, highlightShader);
-    shader.uniforms.fbo.value = this.fbo.texture;
-    highlightShader.uniforms.inputTexture.value = this.fbo.texture;
+    shader.uniforms.fbo.value = this.glitch.fbo.texture;
+    highlightShader.uniforms.inputTexture.value = this.glitch.fbo.texture;
 
     this.blurStrength = 1;
     this.blurPasses = [];
@@ -190,8 +306,9 @@ class Effect extends glEffectBase {
     this.camera.position.set(4, 4, 4);
     this.camera.lookAt(this.scene.position);
 
-    this.renderer.compile(lightScene, this.camera);
-    this.renderer.compile(darkScene, this.camera);
+    initLightScene(this.renderer, this.camera);
+    initDarkScene(this.renderer, this.camera);
+
     this.badness = 0;
     this.render(0, this.camera);
     this.badness = 1;
@@ -203,10 +320,11 @@ class Effect extends glEffectBase {
     this.post.setSize(w, h);
     this.final.setSize(w, h);
     this.highlight.setSize(w, h);
-    shader.uniforms.resolution.value.set(w, h);
-    blurShader.uniforms.resolution.value.set(w, h);
-    highlightShader.uniforms.resolution.value.set(w, h);
-    finalShader.uniforms.resolution.value.set(w, h);
+    this.glitch.setSize(w, h);
+    // shader.uniforms.resolution.value.set(w, h);
+    // blurShader.uniforms.resolution.value.set(w, h);
+    // highlightShader.uniforms.resolution.value.set(w, h);
+    // finalShader.uniforms.resolution.value.set(w, h);
 
     let tw = w;
     let th = h;
@@ -220,6 +338,7 @@ class Effect extends glEffectBase {
   }
 
   render(t, camera) {
+    this.glitch.shader.uniforms.time.value = 0.001 * performance.now();
     // for (const obj of this.cylinder.children) {
     //   //obj.rotation.z = performance.now() / 10000;
     // }
@@ -237,6 +356,7 @@ class Effect extends glEffectBase {
     // return;
 
     if (this.badness >= 0.5) {
+      updateDarkScene(t);
       setText(this.renderer, events[Math.floor(Math.random() * events.length)]);
     }
     setDistortion(this.distortion);
@@ -245,13 +365,14 @@ class Effect extends glEffectBase {
 
     this.renderer.setRenderTarget(this.fbo);
     if (this.badness < 0.5) {
-      updateLightScene();
-      this.renderer.render(lightScene, this.camera);
+      updateLightScene(t);
+      this.renderer.render(lightScene, camera);
     } else {
-      this.renderer.render(darkScene, this.camera);
+      this.renderer.render(darkScene, camera);
     }
     this.renderer.setRenderTarget(null);
 
+    this.glitch.render();
     this.highlight.render();
 
     let offset = this.blurStrength;
@@ -261,7 +382,7 @@ class Effect extends glEffectBase {
       const blurPass = this.blurPasses[j];
       const w = blurPass.fbo.width;
       const h = blurPass.fbo.height;
-      blurShader.uniforms.resolution.value.set(w, h);
+      //blurShader.uniforms.resolution.value.set(w, h);
       blurPass.render();
       blurShader.uniforms.inputTexture.value =
         blurPass.fbos[blurPass.currentFBO].texture;

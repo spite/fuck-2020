@@ -1,58 +1,70 @@
 import {
-  MeshNormalMaterial,
-  Group,
-  Font,
   Mesh,
   ShapeBufferGeometry,
   DoubleSide,
   Scene,
   OrthographicCamera,
-  PlaneBufferGeometry,
   MeshBasicMaterial,
-  BoxBufferGeometry,
 } from "../third_party/three.module.js";
-import { TTFLoader } from "../third_party/TTFLoader.js";
+import { loadTTF } from "../js/loader.js";
 import { getFBO } from "../js/FBO.js";
 
-let font = null;
-const loader = new TTFLoader();
+const fontMap = new Map();
 
-loader.load("assets/iCiel Ultra.ttf", function (json) {
-  font = new Font(json);
+loadTTF("assets/iCiel Ultra.ttf", (font) => {
+  fontMap.set("ultra", font);
 });
 
-let mesh = null;
-const scene = new Scene();
 const material = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide });
 
-const w = 2048;
-const h = 512;
-const renderTarget = getFBO(w, h);
-const camera = new OrthographicCamera(-16 / 2, 16 / 2, 4 / 2, -4 / 2, 0.1, 20);
-camera.position.z = 0.1;
-camera.lookAt(scene.position);
+class Text extends Scene {
+  constructor(fontName) {
+    super();
+    this.mesh = null;
+    this.font = null;
+    this.fontName = fontName;
 
-function renderText(renderer, text) {
-  if (mesh) {
-    scene.remove(mesh);
-    mesh.geometry.dispose();
+    const w = 2048;
+    const h = 512;
+    this.renderTarget = getFBO(w, h);
+    this.camera = new OrthographicCamera(
+      -16 / 2,
+      16 / 2,
+      4 / 2,
+      -4 / 2,
+      0.1,
+      20
+    );
+    this.camera.position.z = 0.1;
+    this.camera.lookAt(this.position);
   }
 
-  const shapes = font.generateShapes(text, 1);
-  const geometry = new ShapeBufferGeometry(shapes);
-  geometry.computeBoundingBox();
+  render(renderer, text) {
+    if (this.mesh) {
+      this.remove(this.mesh);
+      this.mesh.geometry.dispose();
+    }
 
-  mesh = new Mesh(geometry, material);
-  const w = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-  const h = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-  mesh.position.x -= 0.5 * w;
-  mesh.position.y -= 0.5 * h;
+    if (!this.font) {
+      this.font = fontMap.get(this.fontName);
+    }
 
-  scene.add(mesh);
+    const shapes = this.font.generateShapes(text, 1);
+    const geometry = new ShapeBufferGeometry(shapes);
+    geometry.computeBoundingBox();
 
-  renderer.setRenderTarget(renderTarget);
-  renderer.render(scene, camera);
-  renderer.setRenderTarget(null);
+    this.mesh = new Mesh(geometry, material);
+    const w = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+    const h = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+    this.mesh.position.x -= 0.5 * w;
+    this.mesh.position.y -= 0.5 * h;
+
+    this.add(this.mesh);
+
+    renderer.setRenderTarget(this.renderTarget);
+    renderer.render(this, this.camera);
+    renderer.setRenderTarget(null);
+  }
 }
 
-export { renderText, renderTarget };
+export { Text };

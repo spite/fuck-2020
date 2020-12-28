@@ -12,19 +12,20 @@ if (settings.blur === 9) {
   blurCall = "blur9";
 }
 
-const shader = `
+const shader = `#version 300 es
 precision highp float;
 
-uniform vec2 resolution;
 uniform sampler2D inputTexture;
 uniform vec2 direction;
 
-varying vec2 vUv;
+in vec2 vUv;
+
+out vec4 color;
 
 ${blurFn}
 
 void main() {
-  gl_FragColor = ${blurCall}(inputTexture, vUv, resolution, direction);
+  color = ${blurCall}(inputTexture, vUv, direction);
 }`;
 
 export { shader };

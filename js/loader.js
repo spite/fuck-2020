@@ -2,6 +2,8 @@ import { TextureLoader } from "../third_party/three.module.js";
 import { OBJLoader } from "../third_party/OBJLoader.js";
 import { GLTFLoader } from "../third_party/GLTFLoader.js";
 import { ColladaLoader } from "../third_party/ColladaLoader.js";
+import { TTFLoader } from "../third_party/TTFLoader.js";
+import { Font } from "../third_party/three.module.js";
 
 const queue = [];
 let total = 0;
@@ -80,6 +82,7 @@ function loadAudio(file, callback) {
   const audio = document.createElement("audio");
   audio.src = file;
   audio.preload = true;
+  document.body.append(audio);
   audio.addEventListener("canplay", (e) => {
     if (callback) {
       callback(e);
@@ -89,6 +92,18 @@ function loadAudio(file, callback) {
   return audio;
 }
 
+const ttfLoader = new TTFLoader();
+
+function loadTTF(file, callback) {
+  const resolve = addPromise();
+  ttfLoader.load(file, (json) => {
+    if (callback) {
+      callback(new Font(json));
+    }
+    resolve();
+  });
+}
+
 export {
   addPromise,
   loadTexture,
@@ -96,6 +111,7 @@ export {
   loadGLTF,
   loadDAE,
   loadAudio,
+  loadTTF,
   loaded,
   onProgress,
 };

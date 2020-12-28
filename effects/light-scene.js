@@ -17,8 +17,11 @@ import { sakura } from "./sakura.js";
 import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
 RectAreaLightUniformsLib.init();
 import { addPromise, loadTexture, loadObject } from "../js/loader.js";
+import Maf from "../third_party/Maf.js";
+import Easings from "../third_party/easings.js";
 
 const scene = new Scene();
+//scene.rotation.x = Math.PI / 2;
 scene.add(sakura);
 
 const mapTexture = loadTexture("assets/props.png");
@@ -79,9 +82,9 @@ const nekoMat = new MeshStandardMaterial({
   normalScale: new Vector2(0.05, 0.05),
 });
 
+const pivot = new Group();
 loadObject("assets/neko.obj", (e) => {
   const neko = new Group();
-  const pivot = new Group();
   pivot.position.set(-0.54326, 1.6598, 0);
   const arm = e.children[0];
   arm.position.copy(pivot.position).multiplyScalar(-1);
@@ -144,7 +147,12 @@ function initHdrEnv(renderer) {
   pmremGenerator.compileEquirectangularShader();
 }
 
-function update() {
+function update(t) {
+  const d = 2 * 1.254;
+  const tt = (t % d) / d;
+  const v = Maf.smoothStep(0, 1, Maf.parabola(tt, 4)); //Math.sin(t * 2 * Math.PI + Math.PI / 2);
+  pivot.rotation.x = Maf.mix(0, Math.PI / 2, v);
+
   objectMap["strawberry"].rotation.x += 0.0005;
   objectMap["strawberry"].rotation.y += 0.01;
   objectMap["strawberry"].rotation.z += 0.00075;
@@ -156,4 +164,8 @@ function update() {
   sakura.update();
 }
 
-export { scene, initHdrEnv, update };
+function init(renderer, camera) {
+  renderer.compile(scene, camera);
+}
+
+export { scene, init, initHdrEnv, update };
