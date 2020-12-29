@@ -21,10 +21,10 @@ const gui = new dat.GUI();
 
 const params = {
   controls: !true,
-  blurExposure: 0.3,
+  blurExposure: 0.15,
   blurRadius: 1,
-  blurStrength: 1,
-  aberration: 0.1,
+  blurStrength: 2,
+  aberration: 0.07,
   opacity: 1,
   distortion: 0.05,
   badness: 0,
