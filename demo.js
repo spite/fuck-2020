@@ -130,7 +130,7 @@ function resize() {
 
 window.addEventListener("resize", resize);
 
-const audio = loadAudio("assets/track.mp3");
+const audio = loadAudio("assets/track.ogg");
 
 onProgress((p) => {
   progress.textContent = `${p.toFixed(0)}%`;
