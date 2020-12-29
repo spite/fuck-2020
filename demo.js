@@ -7,12 +7,13 @@ import {
 } from "./third_party/three.module.js";
 import { OrbitControls } from "./third_party/OrbitControls.js";
 import { Effect as NekoEffect } from "./effects/neko.js";
-import { Composer } from "./js/Composer.js";
+//import { Composer } from "./js/Composer.js";
 import * as dat from "./third_party/dat.gui.module.js";
 import { settings } from "./js/settings.js";
 
 import { loadAudio, loaded as allLoaded, onProgress } from "./js/loader.js";
 import { keyframe } from "./js/storyline.js";
+import Maf from "./third_party/Maf.js";
 
 const camera = new PerspectiveCamera(27, 1, 0.1, 100);
 
@@ -57,7 +58,7 @@ renderer.outputEncoding = sRGBEncoding;
 // renderer.gammaFactor = 2.2;
 renderer.toneMapping = ACESFilmicToneMapping;
 
-const composer = new Composer(renderer, 1, 1);
+//const composer = new Composer(renderer, 1, 1);
 
 const effects = [];
 const neko = new NekoEffect(renderer, gui);
@@ -84,13 +85,25 @@ function render(t) {
     keyframe(et, camera);
   }
 
+  if (et >= 22.911 && et < 27.787) {
+    neko.post.shader.uniforms.white.value = Maf.map(22.911, 27.787, 0, 0.6, et);
+  } else {
+    neko.post.shader.uniforms.white.value = 0;
+  }
+
+  if (et < 30.313) {
+    neko.badness = 0;
+  } else {
+    neko.badness = 1;
+  }
+
   neko.final.shader.uniforms.radius.value = params.blurRadius;
   neko.blurStrength = params.blurStrength;
   neko.final.shader.uniforms.exposure.value =
     params.badness * params.blurExposure;
   neko.post.shader.uniforms.opacity.value = params.opacity;
   neko.post.shader.uniforms.aberration.value = params.aberration;
-  neko.badness = params.badness;
+  //neko.badness = params.badness;
   neko.distortion = params.distortion;
   neko.explosion = params.explosion;
 
@@ -113,7 +126,7 @@ function resize() {
   w *= dPR;
   h *= dPR;
   neko.setSize(w, h);
-  composer.setSize(w, h);
+  //composer.setSize(w, h);
 }
 
 window.addEventListener("resize", resize);
@@ -147,6 +160,9 @@ function run() {
   overlay.classList.add("hidden");
   console.log("Start");
   audio.play();
+  audio.controls = true;
+  audio.style.width = "100%";
+  document.body.append(audio);
   render();
 }
 

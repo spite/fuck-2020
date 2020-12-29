@@ -11,7 +11,7 @@ const rot = new Matrix4();
 rot.matrixWorldNeedsUpdate = true;
 rot.set(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
 
-function parsePath(path) {
+function parsePath(path, loops) {
   const values = path.split(" ").map((v) => parseFloat(v));
   const keyframes = [];
   const m = new Matrix4();
@@ -29,27 +29,40 @@ function parsePath(path) {
 }
 
 const paths = {
-  cute001: parsePath(cute1),
-  cute002: parsePath(cute2),
-  cute003: parsePath(cute3),
-  cute004: parsePath(cute4),
-  cute005: parsePath(cute5),
-  cute006: parsePath(cute6),
-  cute007: parsePath(cute7),
+  cute001: { keyframes: parsePath(cute1), loops: false },
+  cute002: { keyframes: parsePath(cute2), loops: false },
+  cute003: { keyframes: parsePath(cute3), loops: false },
+  cute004: { keyframes: parsePath(cute4), loops: false },
+  cute005: { keyframes: parsePath(cute5), loops: false },
+  cute006: { keyframes: parsePath(cute6), loops: false },
+  cute007: { keyframes: parsePath(cute7), loops: false },
 };
 
 const lerpPos = new Vector3();
 const lerpQuat = new Quaternion();
 
 function moveToKeyframe(pathName, object, time) {
+  //console.log(pathName, time);
   const path = paths[pathName];
-  const frames = path.length;
+  const keyframes = path.keyframes;
+  const frames = keyframes.length;
   const duration = frames / 60;
-  const t = ((time * frames) / duration) % frames;
+  let t = (time * frames) / duration;
+  if (path.loops) {
+    t = t % frames;
+  } else {
+    t = Math.min(t, frames - 1);
+  }
   const frame = Math.floor(t);
   const delta = t - frame;
-  const from = path[frame];
-  const to = path[(frame + 1) % frames];
+  const from = keyframes[frame];
+  let toFrame = frame + 1;
+  if (path.loops) {
+    toFrame = toFrame % frames;
+  } else {
+    toFrame = Math.min(toFrame, frames - 1);
+  }
+  const to = keyframes[toFrame];
   lerpPos.copy(from.position).lerp(to.position, delta);
   lerpQuat.copy(from.rotation).slerp(to.rotation, delta);
   object.position.copy(lerpPos);
