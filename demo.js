@@ -7,13 +7,13 @@ import {
 } from "./third_party/three.module.js";
 import { OrbitControls } from "./third_party/OrbitControls.js";
 import { Effect as NekoEffect } from "./effects/neko.js";
-//import { Composer } from "./js/Composer.js";
 import * as dat from "./third_party/dat.gui.module.js";
 import { settings } from "./js/settings.js";
 
 import { loadAudio, loaded as allLoaded, onProgress } from "./js/loader.js";
 import { keyframe } from "./js/storyline.js";
 import Maf from "./third_party/Maf.js";
+import Easings from "./third_party/easings.js";
 
 const camera = new PerspectiveCamera(27, 1, 0.1, 100);
 
@@ -21,6 +21,7 @@ const gui = new dat.GUI();
 
 const params = {
   controls: !true,
+  glitch: 0,
   blurExposure: 0.15,
   blurRadius: 1,
   blurStrength: 2,
@@ -33,6 +34,7 @@ const params = {
 
 const postFolder = gui.addFolder("Post");
 postFolder.add(params, "controls");
+postFolder.add(params, "glitch", 0, 1, 0.01);
 postFolder.add(params, "blurExposure", 0, 3, 0.01);
 postFolder.add(params, "blurRadius", 0, 1, 0.01);
 postFolder.add(params, "blurStrength", 0, 2, 0.01);
@@ -57,8 +59,6 @@ renderer.setClearColor(0, 1);
 renderer.outputEncoding = sRGBEncoding;
 // renderer.gammaFactor = 2.2;
 renderer.toneMapping = ACESFilmicToneMapping;
-
-//const composer = new Composer(renderer, 1, 1);
 
 const effects = [];
 const neko = new NekoEffect(renderer, gui);
@@ -97,6 +97,24 @@ function render(t) {
     neko.badness = 1;
   }
 
+  neko.glitchAmount = 0;
+  neko.glitch2Amount = 0;
+  if (et > 6.087 && et < 7.745) {
+    const v = Maf.map(6.087, 7.745, 0, 1, et);
+    neko.glitchAmount = 0.2 * Maf.parabola(v, 1);
+    neko.glitch2Amount = 0.2 * Maf.parabola(v, 1);
+  }
+  if (et > 14.208 && et < 15.1) {
+    const v = Maf.map(14.208, 15.1, 0, 1, et);
+    neko.glitchAmount = 0.4 * Maf.parabola(v, 1);
+    neko.glitch2Amount = 0.1 * Maf.parabola(v, 1);
+  }
+  if (et > 19.376 && et < 27.787) {
+    const v = Maf.map(19.376, 27.787, 0, 1, et);
+    neko.glitchAmount = 0.5 * Easings.InQuad(v);
+    neko.glitch2Amount = 0.1 * Easings.InQuad(v);
+  }
+  //neko.glitchAmount = params.glitch;
   neko.final.shader.uniforms.radius.value = params.blurRadius;
   neko.blurStrength = params.blurStrength;
   neko.final.shader.uniforms.exposure.value = params.blurExposure;
@@ -106,9 +124,7 @@ function render(t) {
   neko.distortion = params.distortion;
   neko.explosion = params.explosion;
 
-  //const et = performance.now() / 1000;
   neko.render(et, camera);
-  //composer.render(neko.post.fbo);
   requestAnimationFrame(render);
 }
 
@@ -125,7 +141,6 @@ function resize() {
   w *= dPR;
   h *= dPR;
   neko.setSize(w, h);
-  //composer.setSize(w, h);
 }
 
 window.addEventListener("resize", resize);

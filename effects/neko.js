@@ -125,6 +125,8 @@ const glitchFs = `#version 300 es
 precision highp float;
 
 uniform sampler2D inputTexture;
+uniform float amount;
+uniform float amount2;
 uniform float time;
 uniform float distortion;
 uniform float distortion2;
@@ -185,7 +187,7 @@ float snoise(vec2 v) {
 
 // End Ashima 2D Simplex Noise
 
-vec4 glitch(in sampler2D map, in vec2 uv, in float time, in float speed, in float distortion, in float distortion2, in float rollSpeed ) {
+vec2 tvGlitch(in vec2 uv, in float time, in float speed, in float distortion, in float distortion2, in float rollSpeed ) {
   vec2 p = vUv;
   float ty = time*speed;
   float yt = p.y - ty;
@@ -196,7 +198,7 @@ vec4 glitch(in sampler2D map, in vec2 uv, in float time, in float speed, in floa
   //add fine grain distortion
   offset += snoise(vec2(yt*50.0,0.0))*distortion2*0.001;
   //combine distortion on X with roll on Y
-  return texture(inputTexture,  vec2(fract(p.x + offset),fract(p.y-time*rollSpeed) ));
+  return vec2(fract(p.x + offset),fract(p.y-time*rollSpeed) );
 }
 
 // https://www.shadertoy.com/view/tsX3RN
@@ -217,10 +219,41 @@ float noise(in vec2 uv, in float time) {
   return random(uv2.xy)*maxStrength;
 }
 
+// https://www.shadertoy.com/view/MscGzl
+
+vec4 posterize(vec4 color, float numColors) {
+  return floor(color * numColors - 0.5) / numColors;
+}
+
+vec2 quantize(vec2 v, float steps) {
+  return floor(v * steps) / steps;
+}
+
+float dist(vec2 a, vec2 b) {
+  return sqrt(pow(b.x - a.x, 2.0) + pow(b.y - a.y, 2.0));
+}
+
+vec4 glitch2(in sampler2D map, in vec2 uv, in float time, in float amount) {   
+  vec2 resolution = vec2(textureSize(map, 0));
+  vec2 pixel = 1.0 / resolution.xy;    
+  vec4 color = texture(map, uv);
+  float t = mod(mod(time, amount * 100.0 * (amount - 0.5)) * 109.0, 1.0);
+  vec4 postColor = posterize(color, 16.0);
+  vec4 a = posterize(texture(map, quantize(uv, 64.0 * t) + pixel * (postColor.rb - vec2(.5)) * 100.0), 5.0).rbga;
+  vec4 b = posterize(texture(map, quantize(uv, 32.0 - t) + pixel * (postColor.rg - vec2(.5)) * 1000.0), 4.0).gbra;
+  vec4 c = posterize(texture(map, quantize(uv, 16.0 + t) + pixel * (postColor.rg - vec2(.5)) * 20.0), 16.0).bgra;
+  return texture(map, uv + amount * (quantize((a * t - b + c - (t + t / 2.0) / 10.0).rg, 16.0) - vec2(.5)) * pixel * 100.0);            
+}
+
 void main() {
-  float n = noise(vUv, time/100.);
-  n = smoothstep(0., maxStrength, n);
-  color = texture(inputTexture,vUv);//glitch(inputTexture, vUv, time, speed, distortion, distortion2, rollSpeed) * vec4(n);
+  float n = noise(100.*vUv, time/100.);
+  n = .5 + .5 * mix(1., smoothstep(0., maxStrength, n), amount2);
+  vec2 uv = mix(tvGlitch(vUv, time, speed, distortion, distortion2, rollSpeed), vUv, amount2);
+  if(amount==0.){
+    color = texture(inputTexture, uv);
+  }else {
+    color = glitch2(inputTexture, uv, time, amount);// * vec4(n);
+  }
 }
 `;
 
@@ -244,6 +277,8 @@ const glitchShader = new RawShaderMaterial({
   uniforms: {
     inputTexture: { value: null },
     time: { value: 0 },
+    amount: { value: 0 },
+    amount2: { value: 0 },
     speed: { value: 0.2 },
     rollSpeed: { value: 0 },
     distortion: { value: 0 },
@@ -272,6 +307,8 @@ class Effect extends glEffectBase {
     this.badness = 0;
     this.distortion = 0;
     this.explosion = 0;
+    this.glitchAmount = 0;
+    this.glitch2Amount = 0;
 
     this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
@@ -341,9 +378,19 @@ class Effect extends glEffectBase {
     }
   }
 
-  render(t, camera) {
-    this.glitch.shader.uniforms.time.value = 0.001 * performance.now();
+  updateGlitch() {
+    const t = 0.001 * performance.now();
+    this.glitch.shader.uniforms.time.value = t;
+    this.glitch.shader.uniforms.amount.value = this.glitchAmount;
+    this.glitch.shader.uniforms.amount2.value = this.glitch2Amount;
+    this.glitch.shader.uniforms.speed.value = this.glitch2Amount * 1;
+    this.glitch.shader.uniforms.rollSpeed.value =
+      (0.5 + 0.5 * Math.sin(this.glitch2Amount * t)) * this.glitch2Amount * 10;
+    this.glitch.shader.uniforms.distortion.value = this.glitch2Amount * 4;
+    this.glitch.shader.uniforms.distortion2.value = this.glitch2Amount * 6;
+  }
 
+  render(t, camera) {
     if (this.badness >= 0.5) {
       updateDarkScene(t);
       setText(this.renderer, events[Math.floor(Math.random() * events.length)]);
@@ -353,6 +400,8 @@ class Effect extends glEffectBase {
     } else {
       updateLightScene(t);
     }
+
+    this.updateGlitch(this.glitchAmount);
 
     this.renderer.setRenderTarget(this.fbo);
     if (this.badness < 0.5) {

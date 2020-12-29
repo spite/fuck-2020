@@ -18,7 +18,6 @@ import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLi
 RectAreaLightUniformsLib.init();
 import { addPromise, loadTexture, loadObject } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
-import Easings from "../third_party/easings.js";
 import { settings } from "../js/settings.js";
 
 const scene = new Scene();
