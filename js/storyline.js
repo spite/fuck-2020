@@ -21,7 +21,6 @@ addSegment("cute001", 5.092);
 addSegment("cute002", 10.121);
 addSegment("cute003", 14.552);
 
-addSegment("cute006", 14.552);
 addSegment("cute007", 14.591);
 addSegment("cute006", 14.639);
 addSegment("cute007", 14.695);
@@ -29,14 +28,18 @@ addSegment("cute006", 14.76);
 addSegment("cute007", 14.84);
 addSegment("cute006", 14.932);
 addSegment("cute007", 15.044);
+addSegment("cute006", 15.189);
 
-addSegment("cute004", 15.189);
+addSegment("cute004", 19.376);
+
+addSegment("cute005", 27.787);
 
 //repique in out
-addSegment("cute006", 15.799);
-addSegment("cute007", 16.26);
+//addSegment("cute006", 16.26);
+//addSegment("cute007", 19.376);
 
-addSegment("cute005", 19.376);
+// addSegment("cute006", 27.787);
+// addSegment("cute007", 127.787);
 
 parseSegments();
 
