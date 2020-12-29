@@ -4,6 +4,7 @@ const low = {
   blur: 5,
   chromaticSteps: 6,
   blurSteps: 3,
+  reflectionSize: 512,
 };
 
 const medium = {
@@ -12,6 +13,7 @@ const medium = {
   blur: 5,
   chromaticSteps: 12,
   blurSteps: 4,
+  reflectionSize: 1024,
 };
 
 const high = {
@@ -20,6 +22,7 @@ const high = {
   blur: 13,
   chromaticSteps: 24,
   blurSteps: 5,
+  reflectionSize: 2048,
 };
 
 const ultra = {
@@ -28,9 +31,8 @@ const ultra = {
   blur: 13,
   chromaticSteps: 100,
   blurSteps: 5,
+  reflectionSize: 4096,
 };
-
-const preset = window.location.hash.substr(1);
 
 const presets = {
   low: low,
@@ -39,6 +41,10 @@ const presets = {
   ultra: ultra,
 };
 
-const settings = presets[preset] ? presets[preset] : high;
+let settings = high;
 
-export { settings };
+function setPreset(quality) {
+  settings = presets[quality] ? presets[quality] : high;
+}
+
+export { settings, presets, setPreset };

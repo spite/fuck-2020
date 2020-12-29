@@ -43,8 +43,11 @@
         font-family: ultra;
         text-transform: uppercase;
       }
+      #intro {
+      }
       #loading {
         pointer-events: none;
+        display: none;
       }
       #start {
         pointer-events: auto;
@@ -57,6 +60,7 @@
   </head>
 
   <body>
+    <div class="overlay" id="quality">Quality:</div>
     <div class="overlay" id="loading">Loading...</div>
     <div class="overlay" id="start">Start</div>
     <script async type="module" src="bundle.js"></script>

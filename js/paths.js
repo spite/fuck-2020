@@ -1,5 +1,11 @@
 import { Matrix4, Quaternion, Vector3 } from "../third_party/three.module.js";
-import { path as light1 } from "../paths/light1.js";
+import { path as cute1 } from "../paths/cute001.js";
+import { path as cute2 } from "../paths/cute002.js";
+import { path as cute3 } from "../paths/cute003.js";
+import { path as cute4 } from "../paths/cute004.js";
+import { path as cute5 } from "../paths/cute005.js";
+import { path as cute6 } from "../paths/cute006.js";
+import { path as cute7 } from "../paths/cute007.js";
 
 const rot = new Matrix4();
 rot.matrixWorldNeedsUpdate = true;
@@ -22,19 +28,28 @@ function parsePath(path) {
   return keyframes;
 }
 
-const path1 = parsePath(light1);
+const paths = {
+  cute001: parsePath(cute1),
+  cute002: parsePath(cute2),
+  cute003: parsePath(cute3),
+  cute004: parsePath(cute4),
+  cute005: parsePath(cute5),
+  cute006: parsePath(cute6),
+  cute007: parsePath(cute7),
+};
 
 const lerpPos = new Vector3();
 const lerpQuat = new Quaternion();
 
-function moveToKeyframe(path, object, time) {
-  const frames = path1.length;
+function moveToKeyframe(pathName, object, time) {
+  const path = paths[pathName];
+  const frames = path.length;
   const duration = frames / 60;
   const t = ((time * frames) / duration) % frames;
   const frame = Math.floor(t);
   const delta = t - frame;
-  const from = path1[frame];
-  const to = path1[(frame + 1) % frames];
+  const from = path[frame];
+  const to = path[(frame + 1) % frames];
   lerpPos.copy(from.position).lerp(to.position, delta);
   lerpQuat.copy(from.rotation).slerp(to.rotation, delta);
   object.position.copy(lerpPos);

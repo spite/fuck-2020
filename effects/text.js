@@ -11,9 +11,13 @@ import { getFBO } from "../js/FBO.js";
 
 const fontMap = new Map();
 
-loadTTF("assets/iCiel Ultra.ttf", (font) => {
+loadTTF("assets/ultra.ttf", (font) => {
   fontMap.set("ultra", font);
 });
+
+// loadTTF("assets/bellota.ttf", (font) => {
+//   fontMap.set("bellota", font);
+// });
 
 const material = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide });
 

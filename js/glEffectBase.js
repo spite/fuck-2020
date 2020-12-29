@@ -4,6 +4,7 @@ import {
   Scene,
   FloatType,
   HalfFloatType,
+  sRGBEncoding,
 } from "../third_party/three.module.js";
 import { getFBO } from "./FBO.js";
 import { canDoFloatLinear } from "./features.js";
@@ -15,10 +16,9 @@ class glEffectBase extends EffectBase {
 
     this.fbo = getFBO(1, 1, {
       //type: canDoFloatLinear() ? FloatType : HalfFloatType,
+      //encoding: sRGBEncoding,
     });
-    this.postFbo = getFBO(1, 1, {
-      type: canDoFloatLinear() ? FloatType : HalfFloatType,
-    });
+    this.fbo.texture.encoding = sRGBEncoding;
     this.scene = new Scene();
     this.camera = new PerspectiveCamera(50, 1, 0.1, 100);
   }
@@ -28,7 +28,6 @@ class glEffectBase extends EffectBase {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.fbo.setSize(w, h);
-    this.postFbo.setSize(w, h);
   }
 }
 

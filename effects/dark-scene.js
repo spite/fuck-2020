@@ -11,6 +11,7 @@ import {
   RectAreaLight,
   Mesh,
   IcosahedronBufferGeometry,
+  sRGBEncoding,
 } from "../third_party/three.module.js";
 import { CylinderMaterial } from "./cylinder-material.js";
 import { NekoMaterial } from "./neko-material.js";
@@ -21,6 +22,7 @@ import Maf from "../third_party/Maf.js";
 import { Text } from "./text.js";
 import { plane as banner } from "./dark-banner.js";
 import Easings from "../third_party/easings.js";
+import { settings } from "../js/settings.js";
 
 const scene = new Scene();
 scene.rotation.y = Math.PI;
@@ -33,12 +35,13 @@ const cylinder = new Group();
 const cylinderMat = new CylinderMaterial();
 cylinderMat.uniforms.text.value = textRender.renderTarget.texture;
 
-const cubeRenderTarget = new WebGLCubeRenderTarget(4096, {
+const cubeRenderTarget = new WebGLCubeRenderTarget(settings.reflectionSize, {
   format: RGBAFormat,
   //type: canDoFloatLinear() ? FloatType : HalfFloatType,
   generateMipmaps: true,
   minFilter: LinearMipmapLinearFilter,
 });
+cubeRenderTarget.texture.encoding = sRGBEncoding;
 
 const cubeCamera = new CubeCamera(0.1, 20, cubeRenderTarget);
 scene.add(cubeCamera);

@@ -12,14 +12,14 @@ import * as dat from "./third_party/dat.gui.module.js";
 import { settings } from "./js/settings.js";
 
 import { loadAudio, loaded as allLoaded, onProgress } from "./js/loader.js";
-import { moveToKeyframe } from "./js/paths.js";
+import { keyframe } from "./js/storyline.js";
 
 const camera = new PerspectiveCamera(27, 1, 0.1, 100);
 
 const gui = new dat.GUI();
 
 const params = {
-  controls: true,
+  controls: !true,
   blurExposure: 0.3,
   blurRadius: 1,
   blurStrength: 1,
@@ -64,22 +64,24 @@ const neko = new NekoEffect(renderer, gui);
 
 effects.push(neko);
 
-camera.position.set(4, 4, 4);
+camera.position.set(0, 0, -20);
 camera.lookAt(new Vector3(0, 0, 0));
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.screenSpacePanning = true;
 
+const overlay = document.querySelector(".overlay");
 const loading = document.querySelector("#loading");
+const progress = loading.querySelector("p.progress");
 const start = document.querySelector("#start");
 start.addEventListener("click", () => {
   run();
 });
 
 function render(t) {
-  //keyframe(audio.currentTime);
+  const et = audio.currentTime;
   if (!params.controls) {
-    moveToKeyframe(null, camera, performance.now() / 1000);
+    keyframe(et, camera);
   }
 
   neko.final.shader.uniforms.radius.value = params.blurRadius;
@@ -92,10 +94,9 @@ function render(t) {
   neko.distortion = params.distortion;
   neko.explosion = params.explosion;
 
-  //const t= audio.currentTime;
-  const et = performance.now() / 1000;
+  //const et = performance.now() / 1000;
   neko.render(et, camera);
-  composer.render(neko.post.fbo);
+  //composer.render(neko.post.fbo);
   requestAnimationFrame(render);
 }
 
@@ -119,11 +120,12 @@ window.addEventListener("resize", resize);
 
 const audio = loadAudio("assets/track.mp3");
 
-onProgress((progress) => {
-  loading.textContent = `Loading ${progress.toFixed(0)}%`;
+onProgress((p) => {
+  progress.textContent = `${p.toFixed(0)}%`;
 });
 
 async function init() {
+  loading.style.display = "flex";
   console.log("Loading...");
   await allLoaded();
   console.log("All loaded");
@@ -142,12 +144,9 @@ async function init() {
 }
 
 function run() {
-  start.style.display = "none";
+  overlay.classList.add("hidden");
   console.log("Start");
-  // audio.muted = true;
-  // audio.play();
-  //audio.controls = true;
-  //document.body.append(audio);
+  audio.play();
   render();
 }
 

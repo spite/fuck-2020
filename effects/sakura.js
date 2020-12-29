@@ -34,9 +34,17 @@ in vec2 vUv;
 
 out vec4 color;
 
+vec4 fromLinear(vec4 linearRGB) {
+  bvec4 cutoff = lessThan(linearRGB, vec4(0.0031308));
+  vec4 higher = vec4(1.055)*pow(linearRGB, vec4(1.0/2.4)) - vec4(0.055);
+  vec4 lower = linearRGB * vec4(12.92);
+
+  return mix(higher, lower, cutoff);
+}
+
 void main() {
-  vec4 c1 = vec4(192., 179., 186., 255.)/255.;
-  vec4 c2 = vec4(171., 143., 150., 255.)/255.;
+  vec4 c1 = fromLinear(vec4(192., 179., 186., 255.)/255.);
+  vec4 c2 = fromLinear(vec4(171., 143., 150., 255.)/255.);
   
   color = vec4(mix(c1.rgb, c2.rgb, vUv.x),1.);
 

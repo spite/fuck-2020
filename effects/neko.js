@@ -3,6 +3,7 @@ import {
   Vector2,
   RawShaderMaterial,
   RGBAFormat,
+  sRGBEncoding,
 } from "../third_party/three.module.js";
 import { ShaderPass } from "../js/ShaderPass.js";
 import { ShaderPingPongPass } from "../js/ShaderPingPongPass.js";
@@ -111,7 +112,7 @@ ${vignette}
 void main() {
   vec2 dir = vec2(0.);// (texture(crackMap, vUv).xy -.5)/10.;
   vec4 c = chromaticAberration(inputTexture, vUv, aberration, dir);
-  c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
+  //c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
   color = c;
 }
 `;
@@ -255,7 +256,7 @@ const finalShader = new RawShaderMaterial({
     inputTexture: { value: null },
     aberration: { value: 1 },
     opacity: { value: 1 },
-    crackMap: { value: loadTexture("assets/NormalMap.jpg") },
+    crackMap: { value: loadTexture("assets/NormalMap.png") },
   },
   vertexShader: orthoVs,
   fragmentShader: finalFs,
@@ -271,12 +272,16 @@ class Effect extends glEffectBase {
 
     this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
+    this.post.fbo.texture.encoding = sRGBEncoding;
     this.glitch = new ShaderPass(this.renderer, glitchShader);
+    this.glitch.fbo.texture.encoding = sRGBEncoding;
     this.final = new ShaderPass(this.renderer, shader);
+    this.final.fbo.texture.encoding = sRGBEncoding;
     this.post.shader.uniforms.inputTexture.value = this.final.fbo.texture;
 
     glitchShader.uniforms.inputTexture.value = this.fbo.texture;
     this.highlight = new ShaderPass(this.renderer, highlightShader);
+    this.highlight.fbo.texture.encoding = sRGBEncoding;
     shader.uniforms.fbo.value = this.glitch.fbo.texture;
     highlightShader.uniforms.inputTexture.value = this.glitch.fbo.texture;
 
@@ -335,33 +340,19 @@ class Effect extends glEffectBase {
 
   render(t, camera) {
     this.glitch.shader.uniforms.time.value = 0.001 * performance.now();
-    // for (const obj of this.cylinder.children) {
-    //   //obj.rotation.z = performance.now() / 10000;
-    // }
-    // this.cylinder.rotation.y = 0.00005 * performance.now();
-    // this.cylinderMat.uniforms.time.value = 0.00005 * performance.now();
-    // if (this.pivot) {
-    //   this.pivot.rotation.x += 0.1;
-    // }
-
-    // this.renderer.render(lightScene, this.camera);
-    // return;
-    //this.mesh.rotation.x = t;
-    // this.mesh.rotation.y = 0.8 * t;
-    // this.renderer.render(this.scene, this.camera);
-    // return;
 
     if (this.badness >= 0.5) {
       updateDarkScene(t);
       setText(this.renderer, events[Math.floor(Math.random() * events.length)]);
+      setDistortion(this.distortion);
+      setExplosion(this.explosion);
+      updateEnv(this.renderer);
+    } else {
+      updateLightScene(t);
     }
-    setDistortion(this.distortion);
-    setExplosion(this.explosion);
-    updateEnv(this.renderer);
 
     this.renderer.setRenderTarget(this.fbo);
     if (this.badness < 0.5) {
-      updateLightScene(t);
       this.renderer.render(lightScene, camera);
     } else {
       this.renderer.render(darkScene, camera);
@@ -376,9 +367,6 @@ class Effect extends glEffectBase {
     for (let j = 0; j < this.levels; j++) {
       blurShader.uniforms.direction.value.set(offset, 0);
       const blurPass = this.blurPasses[j];
-      const w = blurPass.fbo.width;
-      const h = blurPass.fbo.height;
-      //blurShader.uniforms.resolution.value.set(w, h);
       blurPass.render();
       blurShader.uniforms.inputTexture.value =
         blurPass.fbos[blurPass.currentFBO].texture;
@@ -389,7 +377,7 @@ class Effect extends glEffectBase {
     }
 
     this.final.render();
-    this.post.render();
+    this.post.render(true);
   }
 }
 

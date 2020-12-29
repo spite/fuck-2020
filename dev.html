@@ -3,6 +3,7 @@
   <head>
     <title>FMMXX</title>
     <meta charset="utf-8" />
+    <link rel="icon" href="favicon.svg" />
     <meta
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
@@ -10,7 +11,11 @@
     <style>
       @font-face {
         font-family: "ultra";
-        src: url("assets/iCiel Ultra.ttf");
+        src: url("assets/ultra.ttf");
+      }
+      @font-face {
+        font-family: "bellota";
+        src: url("assets/bellota.ttf");
       }
 
       * {
@@ -40,11 +45,56 @@
         justify-content: center;
         place-items: center;
         display: flex;
-        font-family: ultra;
+        font-family: bellota;
+        font-size: max(20px, 1vw);
         text-transform: uppercase;
+        transition: opacity 500ms ease-out;
+      }
+      .overlay.hidden {
+        pointer-events: none;
+        opacity: 0;
+      }
+      .intro {
+        background-color: #e9d9ca;
+        color: #524842;
+        flex-direction: column;
+      }
+      .intro img.logo {
+        height: 35%;
+        margin-bottom: 1vh;
+      }
+      .intro img.start {
+        height: 11%;
+        margin-bottom: 6vh;
+      }
+      #quality {
+        text-align: center;
+        flex-direction: column;
+      }
+      .overlay div.section {
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+        line-height: 2.4em;
+      }
+      .overlay div.section p:first-child {
+        font-weight: bold;
+      }
+      .overlay div.section p {
+        display: flex;
+      }
+      #quality p a {
+        padding: 0 1em;
+        cursor: pointer;
+        margin: 0;
+        line-height: 1.75em;
+      }
+      #quality p a:hover {
+        text-decoration: underline;
       }
       #loading {
         pointer-events: none;
+        display: none;
       }
       #start {
         pointer-events: auto;
@@ -53,13 +103,52 @@
       .dg.ac {
         z-index: 10 !important;
       }
+      .warning {
+        width: 100%;
+        position: absolute;
+        bottom: 0em;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.75em;
+        padding: 2em;
+      }
+
+      @media (max-width: 600px) {
+        #quality p {
+          flex-direction: column;
+        }
+        .warning {
+          font-size: 0.5em;
+        }
+      }
     </style>
   </head>
 
   <body>
-    <div class="overlay" id="loading">Loading...</div>
-    <div class="overlay" id="start">Start</div>
-    <!--<script src="js/CCapture.all.min.js"></script>-->
-    <script async type="module" src="bundle.js"></script>
+    <div class="intro overlay" id="intro">
+      <img class="logo" src="assets/WHITE_LOGO.svg" />
+      <img class="start" src="assets/WHITE_BUTTON.svg" />
+      <div class="section" id="quality">
+        <p>Choose a quality:</p>
+        <p class="presets"></p>
+      </div>
+      <div class="section" id="loading">
+        <p>Loading...</p>
+        <p class="progress">0%</p>
+      </div>
+      <div class="section" id="start">
+        <p>Ready</p>
+        <p>Ring my bell to start</p>
+      </div>
+      <div class="warning">
+        <p>
+          <b>WARNING:</b> This experience may potentially trigger seizures for
+          people with photosensitive epilepsy. Viewer discretion is advised.
+        </p>
+      </div>
+    </div>
+    <script async type="module" src="intro.js"></script>
   </body>
 </html>
