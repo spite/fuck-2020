@@ -179,8 +179,8 @@ function setText(renderer, text) {
 }
 
 function update(t) {
-  const d = 1.254;
-  const tt = (t % d) / d;
+  const d = 0.632;
+  const tt = ((t - 30.313) % d) / d;
   const v = Easings.InOutQuint(Maf.parabola(tt, 4));
   pivot.rotation.x = Maf.mix(0, Math.PI / 2, v);
 }
