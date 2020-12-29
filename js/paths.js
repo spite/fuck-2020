@@ -7,7 +7,6 @@ rot.set(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
 
 function parsePath(path) {
   const values = path.split(" ").map((v) => parseFloat(v));
-  const duration = values.length / 16;
   const keyframes = [];
   const m = new Matrix4();
   do {

@@ -25,11 +25,11 @@ const scene = new Scene();
 scene.rotation.y = Math.PI;
 scene.add(sakura);
 
-const mapTexture = loadTexture("assets/props.png");
+const mapTexture = loadTexture("assets/props.jpg");
 mapTexture.encoding = sRGBEncoding;
 
-const roughnessTexture = loadTexture("assets/props_rough.png");
-const normalTexture = loadTexture("assets/props_normal.png");
+const roughnessTexture = loadTexture("assets/props_rough.jpg");
+const normalTexture = loadTexture("assets/props_normal.jpg");
 
 const material = new MeshStandardMaterial({
   color: 0xffffff,
@@ -64,13 +64,13 @@ for (const object of objects) {
   });
 }
 
-const nekoTexture = loadTexture("assets/manekineko_light_AO.png");
+const nekoTexture = loadTexture("assets/manekineko_light_AO.jpg");
 nekoTexture.encoding = sRGBEncoding;
 
 const nekoRoughnessTexture = loadTexture(
-  "assets/manekineko_light_roughness.png"
+  "assets/manekineko_light_roughness.jpg"
 );
-const nekoNormalTexture = loadTexture("assets/manekineko_light_normal.png");
+const nekoNormalTexture = loadTexture("assets/manekineko_light_normal.jpg");
 
 const nekoMat = new MeshStandardMaterial({
   color: 0xffffff,
@@ -135,7 +135,7 @@ function initHdrEnv(renderer) {
     //.setDataType(UnsignedByteType)
     .setDataType(FloatType)
     .setPath("assets/")
-    .load("lythwood_room_2k.hdr", function (texture) {
+    .load("lythwood_room_1k.hdr", (texture) => {
       radianceMap = pmremGenerator.fromEquirectangular(texture).texture;
       pmremGenerator.dispose();
       material.envMap = radianceMap;

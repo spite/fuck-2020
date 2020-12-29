@@ -1,34 +1,20 @@
 import {
-  RepeatWrapping,
-  TextureLoader,
   sRGBEncoding,
-  LinearEncoding,
   MeshStandardMaterial,
 } from "../third_party/three.module.js";
 import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
+import { loadTexture } from "../js/loader.js";
 
-const loader = new TextureLoader();
-const diffuse = loader.load(`./assets/manekineko_light_AO.png`);
-const dark = loader.load(`./assets/manekineko_dark.png`);
-const normal = loader.load(`./assets/manekineko_light_normal.png`);
-const roughness = loader.load(`./assets/manekineko_light_roughness.png`);
-
-diffuse.encoding = sRGBEncoding;
+const dark = loadTexture("assets/manekineko_dark.jpg");
 dark.encoding = sRGBEncoding;
-normal.encoding = LinearEncoding;
-roughness.encoding = LinearEncoding;
-
-diffuse.wrapS = diffuse.wrapT = RepeatWrapping;
-normal.wrapS = normal.wrapT = RepeatWrapping;
-roughness.wrapS = roughness.wrapT = RepeatWrapping;
 
 class NekoMaterial extends MeshStandardMaterial {
   constructor() {
     const params = {
       roughness: 0,
       metalness: 1,
-      map: diffuse,
+      map: dark,
       color: 0xffffff,
       emissive: 0xffffff,
       emissiveMap: dark,

@@ -4,7 +4,6 @@ import {
   WebGLCubeRenderTarget,
   RGBAFormat,
   LinearMipmapLinearFilter,
-  sRGBEncoding,
   CubeCamera,
   Group,
   Vector3,
@@ -12,13 +11,12 @@ import {
   RectAreaLight,
   Mesh,
   IcosahedronBufferGeometry,
-  DoubleSide,
 } from "../third_party/three.module.js";
 import { CylinderMaterial } from "./cylinder-material.js";
 import { NekoMaterial } from "./neko-material.js";
 import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLib.js";
 RectAreaLightUniformsLib.init();
-import { loadTexture, loadObject, loadDAE } from "../js/loader.js";
+import { loadObject, loadDAE } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
 import { Text } from "./text.js";
 import { plane as banner } from "./dark-banner.js";
@@ -55,17 +53,7 @@ loadObject("assets/cylinder3.obj", (e) => {
   scene.add(cylinder);
 });
 
-const nekoTexture = loadTexture("assets/manekineko_dark.png");
-nekoTexture.encoding = sRGBEncoding;
-
-const nekoMat = new NekoMaterial({
-  color: 0xffffff,
-  emissive: 0xfffff,
-  emissiveMap: nekoTexture,
-  roughness: 0,
-  metalness: 1,
-  side: DoubleSide,
-});
+const nekoMat = new NekoMaterial();
 nekoMat.envMap = cubeRenderTarget.texture;
 
 const neko = new Group();

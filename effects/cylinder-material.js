@@ -127,7 +127,7 @@ void main() {
 }
 `;
 
-const matcap = loadTexture("./assets/matcap.png");
+const matcap = loadTexture("./assets/matcap.jpg");
 matcap.wrapS = matcap.wrapT = RepeatWrapping;
 
 class CylinderMaterial extends RawShaderMaterial {

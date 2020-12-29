@@ -255,7 +255,7 @@ const finalShader = new RawShaderMaterial({
     inputTexture: { value: null },
     aberration: { value: 1 },
     opacity: { value: 1 },
-    crackMap: { value: loadTexture("assets/NormalMap.png") },
+    crackMap: { value: loadTexture("assets/NormalMap.jpg") },
   },
   vertexShader: orthoVs,
   fragmentShader: finalFs,
