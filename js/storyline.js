@@ -17,7 +17,7 @@ function pathEaser(t) {
   const beatDuration = 1 * 0.631;
   const beats = Math.floor(baseT / beatDuration);
   let newT = 0;
-  if (isEven(beats)) {
+  if (!isEven(beats)) {
     newT += 0.5 * beats * beatDuration;
   } else {
     newT += 0.5 * (beats - 1) * beatDuration;
