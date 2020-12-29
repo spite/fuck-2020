@@ -5,6 +5,7 @@ const low = {
   chromaticSteps: 6,
   blurSteps: 3,
   reflectionSize: 512,
+  hdriMap: "lythwood_room_1k.hdr",
 };
 
 const medium = {
@@ -14,6 +15,7 @@ const medium = {
   chromaticSteps: 12,
   blurSteps: 4,
   reflectionSize: 1024,
+  hdriMap: "lythwood_room_2k.hdr",
 };
 
 const high = {
@@ -23,6 +25,7 @@ const high = {
   chromaticSteps: 24,
   blurSteps: 5,
   reflectionSize: 2048,
+  hdriMap: "lythwood_room_2k.hdr",
 };
 
 const ultra = {
@@ -32,6 +35,7 @@ const ultra = {
   chromaticSteps: 100,
   blurSteps: 5,
   reflectionSize: 4096,
+  hdriMap: "lythwood_room_4k.hdr",
 };
 
 const presets = {

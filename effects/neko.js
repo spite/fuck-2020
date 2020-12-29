@@ -90,7 +90,7 @@ void main() {
   bloom += lerpBloomFactor(.4) * texture( blur3Tex, vUv );
   bloom += lerpBloomFactor(.2) * texture( blur4Tex, vUv );
 
-  color = screen(c,bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
+  color = screen(c, bloom, exposure);//screen(clamp(c, vec4(0.), vec4(1.)), clamp(bloom, vec4(0.), vec4(1.)), exposure);
 }
 `;
 

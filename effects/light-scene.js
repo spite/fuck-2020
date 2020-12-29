@@ -19,9 +19,9 @@ RectAreaLightUniformsLib.init();
 import { addPromise, loadTexture, loadObject } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
+import { settings } from "../js/settings.js";
 
 const scene = new Scene();
-//scene.rotation.x = Math.PI / 2;
 scene.rotation.y = Math.PI;
 scene.add(sakura);
 
@@ -135,7 +135,7 @@ function initHdrEnv(renderer) {
     //.setDataType(UnsignedByteType)
     .setDataType(FloatType)
     .setPath("assets/")
-    .load("lythwood_room_1k.hdr", (texture) => {
+    .load(settings.hdriMap, (texture) => {
       radianceMap = pmremGenerator.fromEquirectangular(texture).texture;
       pmremGenerator.dispose();
       material.envMap = radianceMap;

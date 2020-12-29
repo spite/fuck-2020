@@ -99,8 +99,7 @@ function render(t) {
 
   neko.final.shader.uniforms.radius.value = params.blurRadius;
   neko.blurStrength = params.blurStrength;
-  neko.final.shader.uniforms.exposure.value =
-    params.badness * params.blurExposure;
+  neko.final.shader.uniforms.exposure.value = params.blurExposure;
   neko.post.shader.uniforms.opacity.value = params.opacity;
   neko.post.shader.uniforms.aberration.value = params.aberration;
   //neko.badness = params.badness;
