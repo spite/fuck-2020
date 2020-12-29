@@ -25,6 +25,7 @@ import { plane as banner } from "./dark-banner.js";
 import Easings from "../third_party/easings.js";
 
 const scene = new Scene();
+scene.rotation.y = Math.PI;
 const textRender = new Text("ultra");
 
 scene.add(banner);

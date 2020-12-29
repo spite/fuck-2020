@@ -14,11 +14,12 @@ import { settings } from "./js/settings.js";
 import { loadAudio, loaded as allLoaded, onProgress } from "./js/loader.js";
 import { moveToKeyframe } from "./js/paths.js";
 
-const camera = new PerspectiveCamera(50, 1, 0.1, 100);
+const camera = new PerspectiveCamera(27, 1, 0.1, 100);
 
 const gui = new dat.GUI();
 
 const params = {
+  controls: true,
   blurExposure: 0.3,
   blurRadius: 1,
   blurStrength: 1,
@@ -30,6 +31,7 @@ const params = {
 };
 
 const postFolder = gui.addFolder("Post");
+postFolder.add(params, "controls");
 postFolder.add(params, "blurExposure", 0, 3, 0.01);
 postFolder.add(params, "blurRadius", 0, 1, 0.01);
 postFolder.add(params, "blurStrength", 0, 2, 0.01);
@@ -76,7 +78,9 @@ start.addEventListener("click", () => {
 
 function render(t) {
   //keyframe(audio.currentTime);
-  //moveToKeyframe(null, camera, performance.now() / 1000);
+  if (!params.controls) {
+    moveToKeyframe(null, camera, performance.now() / 1000);
+  }
 
   neko.final.shader.uniforms.radius.value = params.blurRadius;
   neko.blurStrength = params.blurStrength;

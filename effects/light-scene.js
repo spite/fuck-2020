@@ -22,6 +22,7 @@ import Easings from "../third_party/easings.js";
 
 const scene = new Scene();
 //scene.rotation.x = Math.PI / 2;
+scene.rotation.y = Math.PI;
 scene.add(sakura);
 
 const mapTexture = loadTexture("assets/props.png");
@@ -150,8 +151,8 @@ function initHdrEnv(renderer) {
 function update(t) {
   const d = 2 * 1.254;
   const tt = (t % d) / d;
-  const v = Maf.smoothStep(0, 1, Maf.parabola(tt, 4)); //Math.sin(t * 2 * Math.PI + Math.PI / 2);
-  pivot.rotation.x = Maf.mix(0, Math.PI / 2, v);
+  const v = 0.5 + 0.5 * Math.sin(t * 2 * Math.PI - Math.PI / 2);
+  pivot.rotation.x = Maf.mix(-Math.PI / 4, Math.PI / 16, v);
 
   objectMap["strawberry"].rotation.x += 0.0005;
   objectMap["strawberry"].rotation.y += 0.01;

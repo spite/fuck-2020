@@ -321,10 +321,6 @@ class Effect extends glEffectBase {
     this.final.setSize(w, h);
     this.highlight.setSize(w, h);
     this.glitch.setSize(w, h);
-    // shader.uniforms.resolution.value.set(w, h);
-    // blurShader.uniforms.resolution.value.set(w, h);
-    // highlightShader.uniforms.resolution.value.set(w, h);
-    // finalShader.uniforms.resolution.value.set(w, h);
 
     let tw = w;
     let th = h;
