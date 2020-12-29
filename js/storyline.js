@@ -65,14 +65,10 @@ addRandomSegment("cute005", 28.89);
 addRandomSegment("cute001", 29.205);
 addRandomSegment("cute004", 29.36);
 addRandomSegment("cute003", 29.522);
-addRandomSegment("cute002", 29.668);
+addRandomSegment("cute001", 29.668);
+addRandomSegment("cute002", 30.313);
 
-//repique in out
-//addSegment("cute006", 16.26);
-//addSegment("cute007", 19.376);
-
-// addSegment("cute006", 27.787);
-// addSegment("cute007", 127.787);
+addSegment("dark002", 35.366);
 
 parseSegments();
 

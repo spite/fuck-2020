@@ -1,4 +1,5 @@
 import { Matrix4, Quaternion, Vector3 } from "../third_party/three.module.js";
+
 import { path as cute1 } from "../paths/cute001.js";
 import { path as cute2 } from "../paths/cute002.js";
 import { path as cute3 } from "../paths/cute003.js";
@@ -6,6 +7,9 @@ import { path as cute4 } from "../paths/cute004.js";
 import { path as cute5 } from "../paths/cute005.js";
 import { path as cute6 } from "../paths/cute006.js";
 import { path as cute7 } from "../paths/cute007.js";
+
+import { path as dark1 } from "../paths/dark001.js";
+import { path as dark2 } from "../paths/dark002.js";
 
 const rot = new Matrix4();
 rot.matrixWorldNeedsUpdate = true;
@@ -36,6 +40,9 @@ const paths = {
   cute005: { keyframes: parsePath(cute5), loops: false },
   cute006: { keyframes: parsePath(cute6), loops: false },
   cute007: { keyframes: parsePath(cute7), loops: false },
+
+  dark001: { keyframes: parsePath(dark1), loops: false },
+  dark002: { keyframes: parsePath(dark2), loops: false },
 };
 
 const lerpPos = new Vector3();

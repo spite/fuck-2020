@@ -114,6 +114,10 @@ function render(t) {
     neko.glitchAmount = 0.5 * Easings.InQuad(v);
     neko.glitch2Amount = 0.1 * Easings.InQuad(v);
   }
+  if (et > 29.668 && et < 30.313) {
+    const v = Maf.map(29.668, 30.313, 0, 1, et);
+    neko.glitchAmount = 2 * Easings.OutQuint(v);
+  }
   //neko.glitchAmount = params.glitch;
   neko.final.shader.uniforms.radius.value = params.blurRadius;
   neko.blurStrength = params.blurStrength;
