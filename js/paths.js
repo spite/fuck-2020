@@ -1,4 +1,5 @@
 import { Matrix4, Quaternion, Vector3 } from "../third_party/three.module.js";
+import Maf from "../third_party/Maf.js";
 
 import { path as cute1 } from "../paths/cute001.js";
 import { path as cute2 } from "../paths/cute002.js";
@@ -10,6 +11,7 @@ import { path as cute7 } from "../paths/cute007.js";
 
 import { path as dark1 } from "../paths/dark001.js";
 import { path as dark2 } from "../paths/dark002.js";
+import { path as dark8 } from "../paths/dark008.js";
 
 const rot = new Matrix4();
 rot.matrixWorldNeedsUpdate = true;
@@ -43,6 +45,7 @@ const paths = {
 
   dark001: { keyframes: parsePath(dark1), loops: false },
   dark002: { keyframes: parsePath(dark2), loops: false },
+  dark008: { keyframes: parsePath(dark8), loops: true },
 };
 
 const lerpPos = new Vector3();
@@ -56,7 +59,7 @@ function moveToKeyframe(pathName, object, time) {
   const duration = frames / 60;
   let t = (time * frames) / duration;
   if (path.loops) {
-    t = t % frames;
+    t = Maf.mod(t, frames);
   } else {
     t = Math.min(t, frames - 1);
   }
@@ -65,7 +68,7 @@ function moveToKeyframe(pathName, object, time) {
   const from = keyframes[frame];
   let toFrame = frame + 1;
   if (path.loops) {
-    toFrame = toFrame % frames;
+    toFrame = Maf.mod(toFrame, frames);
   } else {
     toFrame = Math.min(toFrame, frames - 1);
   }
