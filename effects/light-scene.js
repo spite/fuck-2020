@@ -153,13 +153,8 @@ function update(t) {
   const v = 0.5 + 0.5 * Math.sin(t * 2 * Math.PI - Math.PI / 2);
   pivot.rotation.x = Maf.mix(-Math.PI / 4, Math.PI / 16, v);
 
-  objectMap["strawberry"].rotation.x += 0.0005;
-  objectMap["strawberry"].rotation.y += 0.01;
-  objectMap["strawberry"].rotation.z += 0.00075;
-
-  objectMap["heart"].rotation.x += 0.0005;
-  objectMap["heart"].rotation.y += 0.01;
-  objectMap["heart"].rotation.z += 0.00075;
+  objectMap["strawberry"].rotation.y = t;
+  objectMap["heart"].rotation.y = 0.75 * t;
 
   sakura.update();
 }

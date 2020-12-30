@@ -52,7 +52,7 @@ const canvas = document.createElement("canvas");
 const renderer = new WebGLRenderer({
   canvas,
   preserveDrawingBuffer: false,
-  antialias: false,
+  antialias: true,
   powerPreference: "high-performance",
 });
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -86,9 +86,9 @@ function render(t) {
     keyframe(et, camera);
   }
 
-  if (et >= 22.911 && et < 30.313) {
-    const v = Maf.map(22.911, 30.313, 0, 1, et);
-    neko.post.shader.uniforms.white.value = Easings.InQuint(v);
+  if (et >= 27.787 && et < 30.313) {
+    const v = Maf.map(27.787, 30.313, 0, 1, et);
+    neko.post.shader.uniforms.white.value = 0.25 * Easings.InQuad(v);
   } else {
     neko.post.shader.uniforms.white.value = 0;
   }

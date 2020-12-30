@@ -43,8 +43,8 @@ vec4 fromLinear(vec4 linearRGB) {
 }
 
 void main() {
-  vec4 c1 = fromLinear(vec4(192., 179., 186., 255.)/255.);
-  vec4 c2 = fromLinear(vec4(171., 143., 150., 255.)/255.);
+  vec4 c1 = fromLinear(vec4(230., 93., 85., 255.)/255.);
+  vec4 c2 = fromLinear(vec4(230., 193., 182., 255.)/255.);
   
   color = vec4(mix(c1.rgb, c2.rgb, vUv.x),1.);
 
@@ -87,6 +87,8 @@ class Sakura extends Group {
         dummy.rotation.y = Math.random() * 2 * Math.PI;
         dummy.rotation.z = Math.random() * 2 * Math.PI;
 
+        dummy.scale.setScalar(0.5 + 0.7 * Math.random());
+
         dummy.updateMatrix();
 
         this.mesh.setMatrixAt(i, dummy.matrix);
@@ -107,7 +109,7 @@ class Sakura extends Group {
         this.mesh.getMatrixAt(i, dummy.matrix);
 
         dummy.matrix.decompose(dummy.position, dummy.quaternion, dummy.scale);
-        dummy.position.y -= 0.01;
+        dummy.position.y -= 0.11 * dummy.scale.x;
         if (dummy.position.y < -15) dummy.position.y = 15;
         dummy.quaternion.multiply(q);
         dummy.updateMatrix();
