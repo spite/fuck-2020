@@ -13,6 +13,7 @@ import {
   Mesh,
   IcosahedronBufferGeometry,
   sRGBEncoding,
+  RepeatWrapping,
 } from "../third_party/three.module.js";
 import { CylinderMaterial } from "./cylinder-material.js";
 import { NekoMaterial } from "./neko-material.js";
@@ -30,6 +31,7 @@ scene.rotation.y = Math.PI;
 const textRender = new Text("ultra");
 
 scene.add(banner);
+textRender.renderTarget.texture.wrapS = textRender.renderTarget.texture.wrapT = RepeatWrapping;
 banner.material.uniforms.text.value = textRender.renderTarget.texture;
 
 const textScene = new Scene();
@@ -204,7 +206,10 @@ function init(renderer, camera) {
   renderer.compile(scene, camera);
 }
 
-function render(renderer, camera) {
+function render(t, renderer, camera) {
+  cylinderMat.uniforms.time.value = 0.01 * t;
+  banner.rotation.y = 0.1 * t;
+  banner.position.y = 2 + 2 * Math.sin(t);
   renderer.render(scene, camera);
   renderer.autoClear = false;
   renderer.render(textScene, textCamera);

@@ -16,7 +16,7 @@ import Maf from "./third_party/Maf.js";
 import Easings from "./third_party/easings.js";
 import { getFucking } from "./effects/data.js";
 
-const camera = new PerspectiveCamera(27, 1, 0.1, 100);
+const camera = new PerspectiveCamera(27, 1, 0.1, 200);
 
 const gui = new dat.GUI();
 

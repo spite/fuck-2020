@@ -409,7 +409,7 @@ class Effect extends glEffectBase {
     if (this.badness < 0.5) {
       this.renderer.render(lightScene, camera);
     } else {
-      renderDarkScene(this.renderer, camera);
+      renderDarkScene(t, this.renderer, camera);
     }
     this.renderer.setRenderTarget(null);
 
