@@ -1,3 +1,6 @@
+import Maf from "../third_party/Maf.js";
+import Easings from "../third_party/easings.js";
+
 const fuckings = [
   "Coronavirus",
   "Bushfires",
@@ -6,8 +9,8 @@ const fuckings = [
   "2020",
   "24H news cycle",
   "Influencers",
-  "Quarantine",
-  "Earthquakes",
+  "Anti-maskers",
+  "The GOP",
   "Trump",
   "QRedditAnon",
   "Nazis",
@@ -25,7 +28,7 @@ const fuckings = [
   "Bitcoin",
   "harvey weinstein",
   "Wildfires",
-  "Pandemics",
+  "Ebola",
   "2020",
   "First wave",
   "Second wave",
@@ -51,7 +54,6 @@ const fuckings = [
   "Global warming",
   "No healthcare",
   "Speculation",
-  "The GOP",
   "Cryptoart",
   "Terrorism",
   "Global warming",
@@ -61,11 +63,9 @@ const fuckings = [
   "Oil prices",
   "institutional racism",
   "Brexit",
-  "Ebola",
   "Anti-vaxxers",
   "Social media",
   "Runaway capitalism",
-  "Anti-maskers",
   "this wasted year",
   "2020",
   "2020",
@@ -80,22 +80,34 @@ function isEven(n) {
 
 function getFucking(t) {
   if (t >= 70.736 && t < 75.801) {
-    return "FMMXX";
+    const v = Maf.map(70.736, 75.801, 0, 1, t);
+    return { text: "FMMXX", opacity: Maf.parabola(v, 1) };
   }
   if (t >= 75.801 && t < 80.856) {
-    return "ART ACIDBEAT";
+    const v = Maf.map(75.801, 80.856, 0, 1, t);
+    return { text: "ART ACIDBEAT", opacity: Maf.parabola(v, 1) };
   }
   if (t >= 80.856 && t < 85.835) {
-    return "MUSIC GLOOM";
+    const v = Maf.map(80.856, 85.835, 0, 1, t);
+    return { text: "MUSIC GLOOM", opacity: Maf.parabola(v, 1) };
   }
   if (t >= 85.835 && t < 90.362) {
-    return "CODE SPITE";
+    const v = Maf.map(85.835, 90.362, 0, 1, t);
+    return { text: "CODE SPITE", opacity: Maf.parabola(v, 1) };
+  }
+  if (t > 111.09) {
+    const v = Maf.clamp(t - 111.09, 0, 1);
+    return { text: "FUCK 2020", opacity: v };
   }
 
   const et = t - 30.313;
   const beatDuration = 1 * 0.631;
   const beats = Math.floor(et / beatDuration) - 1;
-  return isEven(beats) ? fuckings[beats / 2] : "FUCK";
+  const text = isEven(beats) ? fuckings[beats / 2] : "FUCK";
+  const opacity = Easings.InOutQuint(
+    Maf.parabola(Maf.mod(et, beatDuration) / beatDuration, 1)
+  );
+  return { text, opacity };
 }
 
 export { getFucking };
