@@ -6,7 +6,7 @@ const fuckings = [
   "Bushfires",
   "Trump",
   "Scalpers",
-  "2020",
+  "exceptionalism",
   "24H news cycle",
   "Influencers",
   "totalitarism",
@@ -15,11 +15,11 @@ const fuckings = [
   "QRedditAnon",
   "Nazis",
   "Facebook",
-  "Cyclones",
-  "Joe Rogan",
   "Fragile male egos",
+  "",
+  "",
   "Jordan Petersen",
-  "2020",
+  "Cyclones",
   "the stock market",
   "Behringer",
   "Trump",
@@ -29,7 +29,7 @@ const fuckings = [
   "harvey weinstein",
   "Wildfires",
   "Ebola",
-  "2020",
+  "Joe Rogan",
   "First wave",
   "Second wave",
   "Third Wave",
@@ -111,6 +111,12 @@ function getFucking(t) {
   const et = t - 30.313;
   const beatDuration = 1 * 0.631;
   const beats = Math.floor(et / beatDuration) - 1;
+
+  console.log(beats);
+  if (beats >= 27 && beats < 31) {
+    return { text: "", opacity: 0, color: 0xffffff };
+  }
+
   const text = isEven(beats) ? fuckings[beats / 2] : "FUCK";
   const opacity = Easings.InOutQuint(
     Maf.parabola(Maf.mod(et, beatDuration) / beatDuration, 1)
