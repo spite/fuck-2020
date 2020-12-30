@@ -21,7 +21,7 @@ import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLi
 RectAreaLightUniformsLib.init();
 import { loadObject, loadDAE } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
-import { Text, setColor as setTextColor } from "./text.js";
+import { Text } from "./text.js";
 import { plane as banner } from "./dark-banner.js";
 import Easings from "../third_party/easings.js";
 import { settings } from "../js/settings.js";
@@ -192,7 +192,7 @@ function setText(renderer, text, color, opacity) {
     textRender.render(renderer, text);
     previousText = text;
   }
-  setTextColor(color, opacity);
+  textRender.setColor(color, opacity);
 }
 
 function update(t) {
@@ -208,7 +208,7 @@ function init(renderer, camera) {
 
 function render(t, renderer, camera) {
   cylinderMat.uniforms.time.value = 0.01 * t;
-  banner.rotation.y = 0.1 * t;
+  banner.rotation.y = 0.2 * t;
   banner.position.y = 2 + 2 * Math.sin(t);
   renderer.render(scene, camera);
   renderer.autoClear = false;

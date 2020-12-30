@@ -1,6 +1,6 @@
 const blur5 = `
 vec4 blur5(sampler2D image, vec2 uv, vec2 direction) {
-  vec2 resolution = vec2(textureSize(inputTexture,0));
+  vec2 resolution = vec2(textureSize(image,0));
   vec4 color = vec4(0.0);
   vec2 off1 = vec2(1.3333333333333333) * direction;
   color += texture(image, uv) * 0.29411764705882354;
@@ -11,7 +11,7 @@ vec4 blur5(sampler2D image, vec2 uv, vec2 direction) {
 
 const blur9 = `
 vec4 blur9(sampler2D image, vec2 uv, vec2 direction) {
-  vec2 resolution = vec2(textureSize(inputTexture,0));
+  vec2 resolution = vec2(textureSize(image,0));
   vec4 color = vec4(0.0);
   vec2 off1 = vec2(1.3846153846) * direction;
   vec2 off2 = vec2(3.2307692308) * direction;
@@ -25,7 +25,7 @@ vec4 blur9(sampler2D image, vec2 uv, vec2 direction) {
 
 const blur13 = `
 vec4 blur13(sampler2D image, vec2 uv, vec2 direction) {
-  vec2 resolution = vec2(textureSize(inputTexture,0));
+  vec2 resolution = vec2(textureSize(image,0));
   vec4 color = vec4(0.0);
   vec2 off1 = vec2(1.411764705882353) * direction;
   vec2 off2 = vec2(3.2941176470588234) * direction;

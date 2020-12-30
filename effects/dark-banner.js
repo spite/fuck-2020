@@ -31,7 +31,7 @@ vec4 grid( in sampler2D map, in vec2 uv ) {
 
 void main() {
   vec4 grid = grid(text, vUv);
-  color = grid;
+  color = vec4(1.,1.,1.,grid);
 }`;
 
 const material = new RawShaderMaterial({
