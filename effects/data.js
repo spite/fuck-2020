@@ -121,7 +121,12 @@ function getFucking(t) {
   const opacity = Easings.InOutQuint(
     Maf.parabola(Maf.mod(et, beatDuration) / beatDuration, 1)
   );
-  return { text, opacity, color: isEven(beats) ? 0xffffff : 0xff00ff };
+  const alternate = isEven((beats - 1) / 2);
+  return {
+    text,
+    opacity,
+    color: isEven(beats) ? 0xffffff : alternate ? 0xff00ff : 0x00ffff,
+  };
 }
 
 export { getFucking };
