@@ -14,6 +14,7 @@ import { loadAudio, loaded as allLoaded, onProgress } from "./js/loader.js";
 import { keyframe } from "./js/storyline.js";
 import Maf from "./third_party/Maf.js";
 import Easings from "./third_party/easings.js";
+import { getFucking } from "./effects/data.js";
 
 const camera = new PerspectiveCamera(27, 1, 0.1, 100);
 
@@ -119,15 +120,25 @@ function render(t) {
     const v = Maf.map(29.668, 30.313, 0, 1, et);
     neko.glitchAmount = 2 * Easings.OutQuint(v);
   }
-  //neko.glitchAmount = params.glitch;
+
+  neko.explosion = 0;
+  if (et >= 90.362 && et < 90.943) {
+    const v = Maf.map(90.362, 90.943, 0, 1, et);
+    neko.explosion = 0.005 * Easings.InQuad(v);
+  }
+  if (et >= 90.943 && et < 119) {
+    const v = Maf.map(90.943, 119, 0.005, 0.1, et);
+    neko.explosion = v;
+  }
+
+  neko.fucking = getFucking(et);
+
   neko.final.shader.uniforms.radius.value = params.blurRadius;
   neko.blurStrength = params.blurStrength;
   neko.final.shader.uniforms.exposure.value = params.blurExposure;
   neko.post.shader.uniforms.opacity.value = params.opacity;
   neko.post.shader.uniforms.aberration.value = params.aberration;
-  //neko.badness = params.badness;
   neko.distortion = params.distortion;
-  neko.explosion = params.explosion;
 
   neko.render(et, camera);
   requestAnimationFrame(render);

@@ -106,9 +106,10 @@ addSegment("dark001", 75.801);
 addSegment("dark003", 80.856);
 addSegment("dark006", 85.835);
 addSegment("dark007", 90.362);
-addSegment("dark002", 90.943);
 
-addSegment("dark008", 200, null, pathEaser);
+addSegment("dark002", 90.943); // FUCK!
+
+addSegment("dark008", 200); //, null, pathEaser);
 
 function findSegmentByTime(t) {
   for (let segment of segments) {

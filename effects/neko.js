@@ -19,7 +19,6 @@ import { screen } from "../shaders/screen.js";
 import { chromaticAberration } from "../shaders/chromatic-aberration.js";
 import { vignette } from "../shaders/vignette.js";
 import { loadTexture } from "../js/loader.js";
-import { events } from "./data.js";
 
 import {
   initHdrEnv,
@@ -28,8 +27,9 @@ import {
   init as initLightScene,
 } from "./light-scene.js";
 import {
-  scene as darkScene,
+  render as renderDarkScene,
   updateEnv,
+  setSize as setDarkSize,
   setDistortion,
   setExplosion,
   setText,
@@ -309,6 +309,7 @@ class Effect extends glEffectBase {
     this.explosion = 0;
     this.glitchAmount = 0;
     this.glitch2Amount = 0;
+    this.fucking = "";
 
     this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
@@ -366,6 +367,7 @@ class Effect extends glEffectBase {
     this.final.setSize(w, h);
     this.highlight.setSize(w, h);
     this.glitch.setSize(w, h);
+    setDarkSize(w, h);
 
     let tw = w;
     let th = h;
@@ -393,7 +395,7 @@ class Effect extends glEffectBase {
   render(t, camera) {
     if (this.badness >= 0.5) {
       updateDarkScene(t);
-      setText(this.renderer, events[Math.floor(Math.random() * events.length)]);
+      setText(this.renderer, this.fucking);
       setDistortion(this.distortion);
       setExplosion(this.explosion);
       updateEnv(this.renderer);
@@ -407,7 +409,7 @@ class Effect extends glEffectBase {
     if (this.badness < 0.5) {
       this.renderer.render(lightScene, camera);
     } else {
-      this.renderer.render(darkScene, camera);
+      renderDarkScene(this.renderer, camera);
     }
     this.renderer.setRenderTarget(null);
 

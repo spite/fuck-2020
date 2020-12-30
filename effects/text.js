@@ -5,6 +5,7 @@ import {
   Scene,
   OrthographicCamera,
   MeshBasicMaterial,
+  PlaneBufferGeometry,
 } from "../third_party/three.module.js";
 import { loadTTF } from "../js/loader.js";
 import { getFBO } from "../js/FBO.js";
@@ -24,7 +25,11 @@ const material = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide });
 class Text extends Scene {
   constructor(fontName) {
     super();
-    this.mesh = null;
+    this.mesh = new Mesh(new PlaneBufferGeometry(1, 1), material);
+    this.add(this.mesh);
+
+    this.outMesh = new Mesh(new PlaneBufferGeometry(1, 1), material);
+
     this.font = null;
     this.fontName = fontName;
 
@@ -44,10 +49,7 @@ class Text extends Scene {
   }
 
   render(renderer, text) {
-    if (this.mesh) {
-      this.remove(this.mesh);
-      this.mesh.geometry.dispose();
-    }
+    this.mesh.geometry.dispose();
 
     if (!this.font) {
       this.font = fontMap.get(this.fontName);
@@ -56,14 +58,17 @@ class Text extends Scene {
     const shapes = this.font.generateShapes(text, 1);
     const geometry = new ShapeBufferGeometry(shapes);
     geometry.computeBoundingBox();
+    geometry.needsUpdate = true;
 
-    this.mesh = new Mesh(geometry, material);
+    this.mesh.geometry = geometry;
     const w = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
     const h = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-    this.mesh.position.x -= 0.5 * w;
-    this.mesh.position.y -= 0.5 * h;
+    this.mesh.position.x = -0.5 * w;
+    this.mesh.position.y = -0.5 * h;
 
-    this.add(this.mesh);
+    this.outMesh.geometry = geometry;
+    this.outMesh.position.x = -0.5 * w;
+    this.outMesh.position.y = -0.5 * h;
 
     renderer.setRenderTarget(this.renderTarget);
     renderer.render(this, this.camera);

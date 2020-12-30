@@ -6,6 +6,7 @@ import {
   LinearMipmapLinearFilter,
   CubeCamera,
   Group,
+  OrthographicCamera,
   Vector3,
   BackSide,
   RectAreaLight,
@@ -30,6 +31,19 @@ const textRender = new Text("ultra");
 
 scene.add(banner);
 banner.material.uniforms.text.value = textRender.renderTarget.texture;
+
+const textScene = new Scene();
+const textCamera = new OrthographicCamera(
+  -20 / 2,
+  20 / 2,
+  1.2 / 2,
+  -1.2 / 2,
+  0.1,
+  20
+);
+textCamera.position.z = 0.1;
+textCamera.lookAt(textScene.position);
+textScene.add(textRender.outMesh);
 
 const cylinder = new Group();
 const cylinderMat = new CylinderMaterial();
@@ -189,4 +203,29 @@ function init(renderer, camera) {
   renderer.compile(scene, camera);
 }
 
-export { scene, init, updateEnv, setDistortion, setExplosion, setText, update };
+function render(renderer, camera) {
+  renderer.render(scene, camera);
+  renderer.autoClear = false;
+  renderer.render(textScene, textCamera);
+  renderer.autoClear = true;
+}
+
+function setSize(w, h) {
+  const ar = w / h;
+  textCamera.left = (-ar * 20) / 2;
+  textCamera.right = (ar * 20) / 2;
+  textCamera.top = 20 / 2;
+  textCamera.bottom = -20 / 2;
+  textCamera.updateProjectionMatrix();
+}
+
+export {
+  render,
+  init,
+  updateEnv,
+  setDistortion,
+  setExplosion,
+  setText,
+  setSize,
+  update,
+};
