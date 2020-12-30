@@ -85,8 +85,9 @@ function render(t) {
     keyframe(et, camera);
   }
 
-  if (et >= 22.911 && et < 27.787) {
-    neko.post.shader.uniforms.white.value = Maf.map(22.911, 27.787, 0, 0.6, et);
+  if (et >= 22.911 && et < 30.313) {
+    const v = Maf.map(22.911, 30.313, 0, 1, et);
+    neko.post.shader.uniforms.white.value = Easings.InQuint(v);
   } else {
     neko.post.shader.uniforms.white.value = 0;
   }

@@ -93,7 +93,14 @@ addRandomSegment("cute003", 29.522);
 addRandomSegment("cute001", 29.668);
 addRandomSegment("cute002", 30.313);
 
-addSegment("dark002", 35.366);
+addSegment("dark010", 35.366);
+addSegment("dark008", 70.736, null, pathEaser);
+
+addSegment("dark001", 75.801);
+addSegment("dark003", 80.856);
+addSegment("dark006", 85.835);
+addSegment("dark007", 90.37);
+
 addSegment("dark008", 200, null, pathEaser);
 
 function findSegmentByTime(t) {

@@ -9,9 +9,18 @@ import { path as cute5 } from "../paths/cute005.js";
 import { path as cute6 } from "../paths/cute006.js";
 import { path as cute7 } from "../paths/cute007.js";
 
-import { path as dark1 } from "../paths/dark001.js";
-import { path as dark2 } from "../paths/dark002.js";
-import { path as dark8 } from "../paths/dark008.js";
+import { path as dark1 } from "../paths/dark001.js"; // slow boom down from back
+import { path as dark2 } from "../paths/dark002.js"; // dolly out from bell
+import { path as dark3 } from "../paths/dark003.js"; // dolly in to left side
+import { path as dark4 } from "../paths/dark004.js"; // truck from above
+import { path as dark5 } from "../paths/dark005.js"; // truck/roll from bottom close up
+import { path as dark6 } from "../paths/dark006.js"; // slow boom up from side
+import { path as dark7 } from "../paths/dark007.js"; // slow dolly in from below
+import { path as dark8 } from "../paths/dark008.js"; // orbit up and down
+import { path as dark9 } from "../paths/dark009.js"; // exagerated orbit around
+import { path as dark10 } from "../paths/dark010.js"; //
+import { path as dark11 } from "../paths/dark011.js";
+import { path as dark12 } from "../paths/dark012.js";
 
 const rot = new Matrix4();
 rot.matrixWorldNeedsUpdate = true;
@@ -45,7 +54,16 @@ const paths = {
 
   dark001: { keyframes: parsePath(dark1), loops: false },
   dark002: { keyframes: parsePath(dark2), loops: false },
-  dark008: { keyframes: parsePath(dark8), loops: true },
+  dark003: { keyframes: parsePath(dark3), loops: false },
+  dark004: { keyframes: parsePath(dark4), loops: false },
+  dark005: { keyframes: parsePath(dark5), loops: false },
+  dark006: { keyframes: parsePath(dark6), loops: false },
+  dark007: { keyframes: parsePath(dark7), loops: false },
+  dark008: { keyframes: parsePath(dark8), loops: true }, // orbit
+  dark009: { keyframes: parsePath(dark9), loops: true }, // orbit
+  dark010: { keyframes: parsePath(dark10), loops: true }, // orbit
+  dark011: { keyframes: parsePath(dark11), loops: true }, // orbit
+  dark012: { keyframes: parsePath(dark12), loops: true }, // orbit
 };
 
 const lerpPos = new Vector3();
