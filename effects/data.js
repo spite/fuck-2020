@@ -105,7 +105,7 @@ function getFucking(t) {
   }
   if (t > 111.09) {
     const v = Maf.clamp(t - 111.09, 0, 1);
-    return { text: "FUCK 2020", opacity: v };
+    return { text: "FUCK 2020", opacity: v, color: 0xffffff };
   }
 
   const et = t - 30.313;
