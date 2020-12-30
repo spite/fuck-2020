@@ -81,7 +81,7 @@ function isEven(n) {
 function getFucking(t) {
   if (t >= 70.736 && t < 75.801) {
     const v = Maf.map(70.736, 75.801, 0, 1, t);
-    return { text: "FMMXX", opacity: Maf.parabola(v, 1) };
+    return { text: "F*MMXX", opacity: Maf.parabola(v, 1) };
   }
   if (t >= 75.801 && t < 80.856) {
     const v = Maf.map(75.801, 80.856, 0, 1, t);

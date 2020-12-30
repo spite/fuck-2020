@@ -47,10 +47,8 @@ const material = new RawShaderMaterial({
 
 const r = 2048 / (2 * Math.PI) / 100;
 const plane = new Mesh(
-  //new PlaneBufferGeometry(2048 / 100, 512 / 100),
   new CylinderBufferGeometry(r, r, 512 / 100, 72, 1, true),
   material
 );
-//plane.position.z = 2;
 
 export { plane };

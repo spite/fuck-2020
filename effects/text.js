@@ -41,6 +41,7 @@ class Text extends Scene {
     this.add(this.mesh);
 
     this.outMesh = new Group();
+    this.outMesh.scale.setScalar(0.9);
     this.textMesh = new Mesh(new PlaneBufferGeometry(1, 1), outMaterial);
     this.strokeText = new Group();
     this.outMesh.add(this.strokeText);
@@ -84,8 +85,8 @@ class Text extends Scene {
     this.mesh.position.y = -0.5 * h;
 
     this.textMesh.geometry = geometry;
-    this.outMesh.position.x = -0.5 * w;
-    this.outMesh.position.y = -0.5 * h;
+    this.outMesh.position.x = -0.5 * w * this.outMesh.scale.x;
+    this.outMesh.position.y = -0.5 * h * this.outMesh.scale.y;
 
     renderer.setRenderTarget(this.renderTarget);
     renderer.render(this, this.camera);
