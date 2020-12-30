@@ -21,7 +21,7 @@ import { RectAreaLightUniformsLib } from "../third_party/RectAreaLightUniformsLi
 RectAreaLightUniformsLib.init();
 import { loadObject, loadDAE } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
-import { Text, setOpacity as setTextOpacity } from "./text.js";
+import { Text, setColor as setTextColor } from "./text.js";
 import { plane as banner } from "./dark-banner.js";
 import Easings from "../third_party/easings.js";
 import { settings } from "../js/settings.js";
@@ -187,12 +187,12 @@ function setExplosion(t) {
 }
 
 let previousText = "";
-function setText(renderer, text, opacity) {
+function setText(renderer, text, color, opacity) {
   if (text !== previousText) {
     textRender.render(renderer, text);
     previousText = text;
   }
-  setTextOpacity(opacity);
+  setTextColor(color, opacity);
 }
 
 function update(t) {

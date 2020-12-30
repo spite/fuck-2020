@@ -130,9 +130,10 @@ class Text extends Scene {
   }
 }
 
-function setOpacity(opacity) {
+function setColor(color, opacity) {
   outMaterial.opacity = opacity;
+  outMaterial.color.set(color);
   matDark.opacity = Easings.InQuint(opacity);
 }
 
-export { Text, setOpacity };
+export { Text, setColor };

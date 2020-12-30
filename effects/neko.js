@@ -309,7 +309,7 @@ class Effect extends glEffectBase {
     this.explosion = 0;
     this.glitchAmount = 0;
     this.glitch2Amount = 0;
-    this.fucking = { text: "", opacity: 0 };
+    this.fucking = { text: "", color: 0, opacity: 0 };
 
     this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
@@ -395,7 +395,12 @@ class Effect extends glEffectBase {
   render(t, camera) {
     if (this.badness >= 0.5) {
       updateDarkScene(t);
-      setText(this.renderer, this.fucking.text, this.fucking.opacity);
+      setText(
+        this.renderer,
+        this.fucking.text,
+        this.fucking.color,
+        this.fucking.opacity
+      );
       setDistortion(this.distortion);
       setExplosion(this.explosion);
       updateEnv(this.renderer);

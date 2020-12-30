@@ -81,19 +81,27 @@ function isEven(n) {
 function getFucking(t) {
   if (t >= 70.736 && t < 75.801) {
     const v = Maf.map(70.736, 75.801, 0, 1, t);
-    return { text: "F*MMXX", opacity: Maf.parabola(v, 1) };
+    return { text: "F*MMXX", opacity: Maf.parabola(v, 1), color: 0xffffff };
   }
   if (t >= 75.801 && t < 80.856) {
     const v = Maf.map(75.801, 80.856, 0, 1, t);
-    return { text: "ART ACIDBEAT", opacity: Maf.parabola(v, 1) };
+    return {
+      text: "ART ACIDBEAT",
+      opacity: Maf.parabola(v, 1),
+      color: 0xffffff,
+    };
   }
   if (t >= 80.856 && t < 85.835) {
     const v = Maf.map(80.856, 85.835, 0, 1, t);
-    return { text: "MUSIC GLOOM", opacity: Maf.parabola(v, 1) };
+    return {
+      text: "MUSIC GLOOM",
+      opacity: Maf.parabola(v, 1),
+      color: 0xffffff,
+    };
   }
   if (t >= 85.835 && t < 90.362) {
     const v = Maf.map(85.835, 90.362, 0, 1, t);
-    return { text: "CODE SPITE", opacity: Maf.parabola(v, 1) };
+    return { text: "CODE SPITE", opacity: Maf.parabola(v, 1), color: 0xffffff };
   }
   if (t > 111.09) {
     const v = Maf.clamp(t - 111.09, 0, 1);
@@ -107,7 +115,7 @@ function getFucking(t) {
   const opacity = Easings.InOutQuint(
     Maf.parabola(Maf.mod(et, beatDuration) / beatDuration, 1)
   );
-  return { text, opacity };
+  return { text, opacity, color: isEven(beats) ? 0xffffff : 0xff00ff };
 }
 
 export { getFucking };
