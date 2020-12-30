@@ -93,13 +93,20 @@ addRandomSegment("cute003", 29.522);
 addRandomSegment("cute001", 29.668);
 addRandomSegment("cute002", 30.313);
 
-addSegment("dark010", 35.366);
+addSegment("dark002", 35.366);
+addSegment("dark008", 40.421, null, pathEaser);
+addSegment("dark009", 45.71, null, pathEaser);
+addSegment("dark012", 50.517, null, pathEaser);
+addSegment("dark008", 55.574, null, pathEaser);
+addSegment("dark009", 60.623, null, pathEaser);
+addSegment("dark012", 65.683, null, pathEaser);
 addSegment("dark008", 70.736, null, pathEaser);
 
 addSegment("dark001", 75.801);
 addSegment("dark003", 80.856);
 addSegment("dark006", 85.835);
-addSegment("dark007", 90.37);
+addSegment("dark007", 90.362);
+addSegment("dark002", 90.943);
 
 addSegment("dark008", 200, null, pathEaser);
 
