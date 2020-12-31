@@ -99,16 +99,26 @@ function render(t) {
     neko.final.shader.uniforms.radius.value = 1;
     neko.blurStrength = 0.58 * Easings.OutQuint(v);
     neko.post.shader.uniforms.aberration.value = 0.19 * Easings.OutQuint(v);
+    neko.distortion = 0.05;
   } else if (et >= 70.736 && et < 90.362) {
     neko.final.shader.uniforms.exposure.value = 0.41;
     neko.final.shader.uniforms.radius.value = 1;
     neko.blurStrength = 2;
     neko.post.shader.uniforms.aberration.value = 0.23;
+    neko.distortion = 0.05;
+  } else if (et >= 90.362 && et < 119) {
+    const v = Maf.map(90.362, 119, 0, 1, et);
+    neko.final.shader.uniforms.exposure.value = v * 0.81;
+    neko.final.shader.uniforms.radius.value = 1;
+    neko.blurStrength = v * 2;
+    neko.post.shader.uniforms.aberration.value = v * 0.38;
+    neko.distortion = v * 0.5;
   } else {
     neko.final.shader.uniforms.exposure.value = 0.15;
     neko.final.shader.uniforms.radius.value = 1;
     neko.blurStrength = 2;
     neko.post.shader.uniforms.aberration.value = 0.07;
+    neko.distortion = 0.05;
   }
 
   if (et < 30.313) {
