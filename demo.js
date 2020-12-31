@@ -18,6 +18,8 @@ import { getFucking } from "./effects/data.js";
 
 const camera = new PerspectiveCamera(27, 1, 0.1, 200);
 
+const debug = !true;
+
 const params = {
   controls: !true,
   glitch: 0,
@@ -31,19 +33,22 @@ const params = {
   explosion: 0,
 };
 
-// const gui = new dat.GUI();
-// const postFolder = gui.addFolder("Post");
-// postFolder.add(params, "controls");
-// postFolder.add(params, "glitch", 0, 1, 0.01);
-// postFolder.add(params, "blurExposure", 0, 3, 0.01);
-// postFolder.add(params, "blurRadius", 0, 1, 0.01);
-// postFolder.add(params, "blurStrength", 0, 2, 0.01);
-// postFolder.add(params, "aberration", 0, 1, 0.01);
-// postFolder.add(params, "opacity", 0, 1, 0.01);
-// postFolder.add(params, "distortion", 0, 0.5, 0.01);
-// postFolder.add(params, "badness", 0, 1, 0.01);
-// postFolder.add(params, "explosion", 0, 1, 0.01);
-// postFolder.open();
+const gui = new dat.GUI();
+if (!debug) {
+  gui.hide();
+}
+const postFolder = gui.addFolder("Post");
+postFolder.add(params, "controls");
+postFolder.add(params, "glitch", 0, 1, 0.01);
+postFolder.add(params, "blurExposure", 0, 3, 0.01);
+postFolder.add(params, "blurRadius", 0, 1, 0.01);
+postFolder.add(params, "blurStrength", 0, 2, 0.01);
+postFolder.add(params, "aberration", 0, 1, 0.01);
+postFolder.add(params, "opacity", 0, 1, 0.01);
+postFolder.add(params, "distortion", 0, 0.5, 0.01);
+postFolder.add(params, "badness", 0, 1, 0.01);
+postFolder.add(params, "explosion", 0, 1, 0.01);
+postFolder.open();
 
 const canvas = document.createElement("canvas");
 document.body.append(canvas);
@@ -81,13 +86,12 @@ start.addEventListener("click", () => {
   run();
 });
 
-// const capturer = new CCapture({ format: "webm", framerate: 60 });
-// window.capturer = capturer;
-
-// window.stop = function () {
-//   capturer.stop();
-//   capturer.save();
-// };
+const doCapture = false;
+let capturer;
+if (doCapture) {
+  capturer = new CCapture({ format: "png", framerate: 60 });
+  window.capturer = capturer;
+}
 
 function render(t) {
   const et = audio.currentTime;
@@ -199,7 +203,9 @@ function render(t) {
   }
 
   neko.render(et, camera);
-  // capturer.capture(canvas);
+  if (doCapture) {
+    capturer.capture(canvas);
+  }
 
   if (et > 122) {
     stop();
@@ -260,14 +266,23 @@ function run() {
   overlay.classList.add("hidden");
   console.log("Start");
   audio.play();
-  //audio.controls = true;
+  if (debug) {
+    audio.controls = true;
+  }
   audio.style.width = "100%";
   document.body.append(audio);
-  // capturer.start();
+  if (doCapture) {
+    capturer.start();
+  }
   render();
 }
 
 function stop() {
+  if (doCapture) {
+    capturer.stop();
+    capturer.save();
+    return;
+  }
   intro.style.display = "none";
   outro.style.display = "flex";
   overlay.classList.remove("hidden");
