@@ -13,13 +13,13 @@ music: gloom
 
 code: spite
 
-Modelled and animated with Blender.
+Modelled and animated with [Blender](https://www.blender.org/).
 
-Coded with threejs, WebGL2, invaluable shaders from ShaderToy, openType.js.  
-Build with esbuild.  
-Capture with CCapture.js.  
+Coded with [threejs](https://threejs.org/), WebGL2, invaluable shaders from [ShaderToy](http://shadertoy.com/), [openType.js](https://opentype.js.org/).  
+Build with [esbuild](https://esbuild.github.io/).  
+Capture with [CCapture.js](https://github.com/spite/ccapture.js/).  
 
-Composed with BitWig Studio. FUCK Ableton Live.
+Composed with [BitWig Studio](https://www.bitwig.com/). FUCK Ableton Live.
 
 Shaders:
 - https://www.shadertoy.com/view/tsX3RN
