@@ -21,8 +21,7 @@ import { vignette } from "../shaders/vignette.js";
 import { loadTexture } from "../js/loader.js";
 
 import {
-  initHdrEnv,
-  scene as lightScene,
+  load as loadLightScene,
   update as updateLightScene,
   init as initLightScene,
   render as renderLightScene,
@@ -32,6 +31,7 @@ import {
 import {
   render as renderDarkScene,
   updateEnv,
+  load as loadDarkScene,
   setSize as setDarkSize,
   setDistortion,
   setExplosion,
@@ -305,6 +305,9 @@ class Effect extends glEffectBase {
   constructor(renderer) {
     super(renderer);
 
+    loadLightScene(renderer);
+    loadDarkScene(renderer);
+
     this.badness = 0;
     this.distortion = 0;
     this.explosion = 0;
@@ -329,8 +332,6 @@ class Effect extends glEffectBase {
     this.blurStrength = 1;
     this.blurPasses = [];
     this.levels = 5;
-
-    initHdrEnv(renderer);
 
     for (let i = 0; i < this.levels; i++) {
       const blurPass = new ShaderPingPongPass(this.renderer, blurShader, {

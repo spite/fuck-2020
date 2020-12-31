@@ -41,15 +41,44 @@ textCamera.position.z = 0.1;
 textCamera.lookAt(textScene.position);
 textScene.add(textRender.outMesh);
 
-const mapTexture = loadTexture(`assets/props_${settings.textureSize}.jpg`);
-mapTexture.encoding = sRGBEncoding;
+let mapTexture = null;
+let roughnessTexture = null;
+let normalTexture = null;
+let nekoTexture = null;
+let nekoRoughnessTexture = null;
+let nekoNormalTexture = null;
 
-const roughnessTexture = loadTexture(
-  `assets/props_rough_${settings.textureSize}.jpg`
-);
-const normalTexture = loadTexture(
-  `assets/props_normal_${settings.textureSize}.jpg`
-);
+function load(renderer) {
+  initHdrEnv(renderer);
+  mapTexture = loadTexture(`assets/props_${settings.textureSize}.jpg`);
+  mapTexture.encoding = sRGBEncoding;
+
+  roughnessTexture = loadTexture(
+    `assets/props_rough_${settings.textureSize}.jpg`
+  );
+  normalTexture = loadTexture(
+    `assets/props_normal_${settings.textureSize}.jpg`
+  );
+  material.map = mapTexture;
+  material.roughnessMap = roughnessTexture;
+  material.normalMap = normalTexture;
+
+  nekoTexture = loadTexture(
+    `assets/manekineko_light_AO_${settings.textureSize}.jpg`
+  );
+  nekoTexture.encoding = sRGBEncoding;
+
+  nekoRoughnessTexture = loadTexture(
+    `assets/manekineko_light_roughness_${settings.textureSize}.jpg`
+  );
+  nekoNormalTexture = loadTexture(
+    `assets/manekineko_light_normal_${settings.textureSize}.jpg`
+  );
+
+  nekoMat.map = nekoTexture;
+  nekoMat.roughnessMap = nekoRoughnessTexture;
+  nekoMat.normalMap = nekoNormalTexture;
+}
 
 const material = new MeshStandardMaterial({
   color: 0xffffff,
@@ -79,22 +108,9 @@ for (const object of objects) {
     obj.material = material;
     scene.add(obj);
     obj.position.set(object.x, object.z, -object.y);
-    //obj.lookAt(scene.position);
     objectMap[object.id] = obj;
   });
 }
-
-const nekoTexture = loadTexture(
-  `assets/manekineko_light_AO_${settings.textureSize}.jpg`
-);
-nekoTexture.encoding = sRGBEncoding;
-
-const nekoRoughnessTexture = loadTexture(
-  `assets/manekineko_light_roughness_${settings.textureSize}.jpg`
-);
-const nekoNormalTexture = loadTexture(
-  `assets/manekineko_light_normal_${settings.textureSize}.jpg`
-);
 
 const nekoMat = new MeshStandardMaterial({
   color: 0xffffff,
@@ -213,4 +229,4 @@ function setSize(w, h) {
   textCamera.updateProjectionMatrix();
 }
 
-export { scene, init, initHdrEnv, render, update, setText, setSize };
+export { scene, load, init, render, update, setText, setSize };

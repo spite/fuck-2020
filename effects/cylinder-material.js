@@ -128,9 +128,6 @@ void main() {
 }
 `;
 
-const matcap = loadTexture(`./assets/matcap_${settings.textureSize}.jpg`);
-matcap.wrapS = matcap.wrapT = RepeatWrapping;
-
 class CylinderMaterial extends RawShaderMaterial {
   constructor() {
     super({
@@ -138,7 +135,7 @@ class CylinderMaterial extends RawShaderMaterial {
         text: { value: null },
         time: { value: 0 },
         distortion: { value: 0.05 },
-        matCapMap: { value: matcap },
+        matCapMap: { value: null },
       },
       vertexShader,
       fragmentShader,

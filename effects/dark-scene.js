@@ -24,6 +24,7 @@ import Maf from "../third_party/Maf.js";
 import { Text } from "./text.js";
 import { plane as banner } from "./dark-banner.js";
 import Easings from "../third_party/easings.js";
+import { loadTexture } from "../js/loader.js";
 import { settings } from "../js/settings.js";
 
 const scene = new Scene();
@@ -81,6 +82,20 @@ const neko = new Group();
 const nekoFracture = new Group();
 nekoFracture.rotation.y = Math.PI;
 const pieces = [];
+
+function load(renderer) {
+  const dark = loadTexture(
+    `assets/manekineko_dark_${settings.textureSize}.jpg`
+  );
+  dark.encoding = sRGBEncoding;
+  nekoMat.map = dark;
+  nekoMat.emissiveMap = dark;
+
+  const matcap = loadTexture(`./assets/matcap_${settings.textureSize}.jpg`);
+  matcap.wrapS = matcap.wrapT = RepeatWrapping;
+
+  cylinderMat.uniforms.matCapMap.value = matcap;
+}
 
 loadDAE("assets/neko_fracture.dae", (e) => {
   const pivot = new Group();
@@ -229,6 +244,7 @@ function setSize(w, h) {
 export {
   render,
   init,
+  load,
   updateEnv,
   setDistortion,
   setExplosion,
