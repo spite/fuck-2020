@@ -86,10 +86,10 @@ start.addEventListener("click", () => {
   run();
 });
 
-const doCapture = false;
+const doCapture = !true;
 let capturer;
 if (doCapture) {
-  capturer = new CCapture({ format: "png", framerate: 60 });
+  capturer = new CCapture({ autoSaveTime: 10, format: "png", framerate: 60 });
   window.capturer = capturer;
 }
 
@@ -234,7 +234,7 @@ window.addEventListener("resize", resize);
 const test = new Audio();
 const canPlayOgg = test.canPlayType("audio/ogg");
 const audio = loadAudio(
-  canPlayOgg ? "assets/track_long.ogg" : "assets/track_long.aac"
+  canPlayOgg ? "assets/track_long.ogg" : "assets/track_long.mp3"
 );
 
 onProgress((p) => {
@@ -258,7 +258,7 @@ async function init() {
     loading.style.display = "none";
     start.style.display = "flex";
     console.log("Ready...");
-    run();
+    //run();
   }, 100);
 }
 
