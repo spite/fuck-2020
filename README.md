@@ -2,6 +2,9 @@
 
 A browser demo to send away 2020.
 
+[![Foo](https://raw.githubusercontent.com/spite/fuck-2020/main/snapshot.png)](https://spite.github.io/fuck-2020/)
+
+[See it live](https://spite.github.io/fuck-2020/)
 ## Credits
 
 3d models, design: acidbeat
