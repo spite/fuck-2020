@@ -61,6 +61,7 @@ cubeRenderTarget.texture.encoding = sRGBEncoding;
 
 const cubeCamera = new CubeCamera(0.1, 20, cubeRenderTarget);
 scene.add(cubeCamera);
+cubeCamera.rotation.y = Math.PI;
 
 loadObject("assets/cylinder3.obj", (e) => {
   cylinder.position.y = -5;
