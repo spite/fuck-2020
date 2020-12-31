@@ -1,4 +1,4 @@
-# F*MMMXX
+# F*MMXX
 
 A browser demo to send away 2020.
 
