@@ -14,10 +14,15 @@ class glEffectBase extends EffectBase {
     super();
     this.renderer = renderer;
 
-    this.fbo = getFBO(1, 1, {
-      //type: canDoFloatLinear() ? FloatType : HalfFloatType,
-      //encoding: sRGBEncoding,
-    });
+    this.fbo = getFBO(
+      1,
+      1,
+      {
+        //type: canDoFloatLinear() ? FloatType : HalfFloatType,
+        //encoding: sRGBEncoding,
+      },
+      true
+    );
     this.fbo.texture.encoding = sRGBEncoding;
     this.scene = new Scene();
     this.camera = new PerspectiveCamera(50, 1, 0.1, 100);

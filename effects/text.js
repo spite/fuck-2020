@@ -8,6 +8,7 @@ import {
   MeshBasicMaterial,
   PlaneBufferGeometry,
   sRGBEncoding,
+  LinearMipmapLinearFilter,
   RawShaderMaterial,
   Color,
 } from "../third_party/three.module.js";
@@ -128,8 +129,9 @@ class Text extends Scene {
     this.font = null;
     this.fontName = fontName;
 
-    this.renderTarget = getFBO(w, h);
+    this.renderTarget = getFBO(w, h, { minFilter: LinearMipmapLinearFilter });
     this.renderTarget.texture.encoding = sRGBEncoding;
+    this.renderTarget.texture.generateMipmaps = true;
     this.camera = new OrthographicCamera(
       -20 / 2,
       20 / 2,
