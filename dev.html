@@ -97,6 +97,10 @@
       #quality p a:hover {
         text-decoration: underline;
       }
+      #quality span {
+        padding: 0 0.5em;
+        cursor: pointer;
+      }
       #loading {
         pointer-events: none;
         display: none;
@@ -125,6 +129,9 @@
       .credits span {
         padding: 0 0.5em;
         color: #ff33ff;
+      }
+      .nsfw {
+        font-weight: bold;
       }
       .line {
         height: 2px;
@@ -185,6 +192,7 @@
       <div class="section" id="quality">
         <p>Choose a quality:</p>
         <p class="presets">Loading presets</p>
+        <p><span class="sfw">SFW</span> | <span class="nsfw">NSFW</span></p>
       </div>
       <div class="section" id="loading">
         <p>Loading...</p>
@@ -218,7 +226,7 @@
         </p>
       </div>
     </div>
-    <script src="third_party/CCapture.all.min.js"></script>
+    <!-- <script src="third_party/CCapture.all.min.js"></script> -->
     <script async type="module" src="intro.js"></script>
   </body>
 </html>
