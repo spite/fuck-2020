@@ -132,14 +132,14 @@ function render(t) {
     neko.final.shader.uniforms.exposure.value = v * 0.81;
     neko.final.shader.uniforms.radius.value = 1;
     neko.blurStrength = v * 2;
-    neko.post.shader.uniforms.aberration.value = v * 0.38;
+    neko.post.shader.uniforms.aberration.value = v * 0.2;
     neko.distortion = v * 0.5;
   } else if (et >= 119 && et < 123) {
     const v = Maf.map(119, 122, 0, 1, et);
     neko.final.shader.uniforms.exposure.value = 0.81;
     neko.final.shader.uniforms.radius.value = 1;
     neko.blurStrength = 2;
-    neko.post.shader.uniforms.aberration.value = 0.38;
+    neko.post.shader.uniforms.aberration.value = 0.2;
     neko.distortion = 0.5;
     neko.post.shader.uniforms.opacity.value = 1 - v;
   } else {
@@ -232,9 +232,9 @@ function resize() {
 window.addEventListener("resize", resize);
 
 const test = new Audio();
-const canPlayAac = test.canPlayType("audio/aac");
+const canPlayOgg = test.canPlayType("audio/ogg");
 const audio = loadAudio(
-  canPlayAac ? "assets/track_long.aac" : "assets/track_long.ogg"
+  canPlayOgg ? "assets/track_long.ogg" : "assets/track_long.aac"
 );
 
 onProgress((p) => {
