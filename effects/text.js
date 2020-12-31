@@ -24,6 +24,7 @@ precision highp float;
 
 uniform sampler2D map;
 uniform vec3 textColor;
+uniform float opacity;
 
 in vec2 vUv;
 
@@ -38,7 +39,7 @@ void main() {
   vec4 s3 = blur5(map, vUv, vec2(8.,0.));
   vec4 s4 = blur5(map, vUv, vec2(0.,8.));
   float shadow = (s1.r+s2.r+s3.r+s4.r)/4.;
-  color = vec4(vec3(2.*c.r)*textColor, 2.*shadow);//vec4(1., 1., 1., c.r);
+  color = vec4(vec3(2.*c.r)*textColor, 2.*shadow*opacity);
 }`;
 
 const fontMap = new Map();
@@ -67,7 +68,11 @@ class Text extends Scene {
     const w = 2048;
     const h = 512;
     const shadowMaterial = new RawShaderMaterial({
-      uniforms: { map: { value: null }, textColor: { value: new Color() } },
+      uniforms: {
+        map: { value: null },
+        textColor: { value: new Color() },
+        opacity: { value: 0 },
+      },
       transparent: true,
       vertexShader,
       fragmentShader,
@@ -107,9 +112,8 @@ class Text extends Scene {
   }
 
   setColor(color, opacity) {
-    this.shadowMesh.material.opacity = opacity;
+    this.shadowMesh.material.uniforms.opacity.value = opacity;
     this.shadowMesh.material.uniforms.textColor.value.set(color);
-    //matDark.opacity = Easings.InQuint(opacity);
   }
 
   render(renderer, text) {

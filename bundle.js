@@ -3413,6 +3413,7 @@ precision highp float;
 
 uniform sampler2D map;
 uniform vec3 textColor;
+uniform float opacity;
 
 in vec2 vUv;
 
@@ -3427,8 +3428,8 @@ void main() {
   vec4 s3 = blur5(map, vUv, vec2(8.,0.));
   vec4 s4 = blur5(map, vUv, vec2(0.,8.));
   float shadow = (s1.r+s2.r+s3.r+s4.r)/4.;
-  color = vec4(vec3(2.*c.r)*textColor, 2.*shadow);//vec4(1., 1., 1., c.r);
-}`,io=new Map;qa("assets/ultra.ttf",e=>{io.set("ultra",e)});var gb=new r2({color:16777215,side:C2}),vb=new r2({color:16777215,emissive:16777215,transparent:!0}),zt=class extends d2{constructor(t){super();this.mesh=new s1(new M9(1,1),gb),this.add(this.mesh);let n=2048,r=512,i=new V1({uniforms:{map:{value:null},textColor:{value:new N0}},transparent:!0,vertexShader:u9,fragmentShader:mb});this.outMesh=new y1,this.outMesh.scale.setScalar(.9),this.textMesh=new s1(new M9(1,1),vb),this.shadowMesh=new s1(new M9(n/125,r/125),i),this.shadowMesh.position.z=-.1,this.strokeText=new y1,this.outMesh.add(this.strokeText),this.outMesh.add(this.shadowMesh),this.strokeText.position.z=-.1,this.font=null,this.fontName=t,this.renderTarget=k3(n,r),this.renderTarget.texture.encoding=O1,this.camera=new w2(-16/2,16/2,4/2,-4/2,.1,20),this.camera.position.z=.1,this.camera.lookAt(this.position),i.uniforms.map.value=this.renderTarget.texture}setColor(t,n){this.shadowMesh.material.opacity=n,this.shadowMesh.material.uniforms.textColor.value.set(t)}render(t,n){this.mesh.geometry.dispose(),this.font||(this.font=io.get(this.fontName));let r=this.font.generateShapes(n,1),i=new L6(r);i.computeBoundingBox(),i.needsUpdate=!0,this.mesh.geometry=i;let s=i.boundingBox.max.x-i.boundingBox.min.x,a=i.boundingBox.max.y-i.boundingBox.min.y;this.mesh.position.x=-.5*s,this.mesh.position.y=-.5*a,this.textMesh.geometry=i,this.textMesh.position.x=-.5*s,this.textMesh.position.y=-.5*a,t.setRenderTarget(this.renderTarget),t.render(this,this.camera),t.setRenderTarget(null)}},yb=`#version 300 es
+  color = vec4(vec3(2.*c.r)*textColor, 2.*shadow*opacity);
+}`,io=new Map;qa("assets/ultra.ttf",e=>{io.set("ultra",e)});var gb=new r2({color:16777215,side:C2}),vb=new r2({color:16777215,emissive:16777215,transparent:!0}),zt=class extends d2{constructor(t){super();this.mesh=new s1(new M9(1,1),gb),this.add(this.mesh);let n=2048,r=512,i=new V1({uniforms:{map:{value:null},textColor:{value:new N0},opacity:{value:0}},transparent:!0,vertexShader:u9,fragmentShader:mb});this.outMesh=new y1,this.outMesh.scale.setScalar(.9),this.textMesh=new s1(new M9(1,1),vb),this.shadowMesh=new s1(new M9(n/125,r/125),i),this.shadowMesh.position.z=-.1,this.strokeText=new y1,this.outMesh.add(this.strokeText),this.outMesh.add(this.shadowMesh),this.strokeText.position.z=-.1,this.font=null,this.fontName=t,this.renderTarget=k3(n,r),this.renderTarget.texture.encoding=O1,this.camera=new w2(-16/2,16/2,4/2,-4/2,.1,20),this.camera.position.z=.1,this.camera.lookAt(this.position),i.uniforms.map.value=this.renderTarget.texture}setColor(t,n){this.shadowMesh.material.uniforms.opacity.value=n,this.shadowMesh.material.uniforms.textColor.value.set(t)}render(t,n){this.mesh.geometry.dispose(),this.font||(this.font=io.get(this.fontName));let r=this.font.generateShapes(n,1),i=new L6(r);i.computeBoundingBox(),i.needsUpdate=!0,this.mesh.geometry=i;let s=i.boundingBox.max.x-i.boundingBox.min.x,a=i.boundingBox.max.y-i.boundingBox.min.y;this.mesh.position.x=-.5*s,this.mesh.position.y=-.5*a,this.textMesh.geometry=i,this.textMesh.position.x=-.5*s,this.textMesh.position.y=-.5*a,t.setRenderTarget(this.renderTarget),t.render(this,this.camera),t.setRenderTarget(null)}},yb=`#version 300 es
 precision highp float;
 
 uniform sampler2D text;
