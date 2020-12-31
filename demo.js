@@ -99,6 +99,11 @@ function render(t) {
     neko.final.shader.uniforms.radius.value = 1;
     neko.blurStrength = 0.58 * Easings.OutQuint(v);
     neko.post.shader.uniforms.aberration.value = 0.19 * Easings.OutQuint(v);
+  } else if (et >= 70.736 && et < 90.362) {
+    neko.final.shader.uniforms.exposure.value = 0.41;
+    neko.final.shader.uniforms.radius.value = 1;
+    neko.blurStrength = 2;
+    neko.post.shader.uniforms.aberration.value = 0.23;
   } else {
     neko.final.shader.uniforms.exposure.value = 0.15;
     neko.final.shader.uniforms.radius.value = 1;
