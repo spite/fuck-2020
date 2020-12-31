@@ -257,7 +257,7 @@ function run() {
   overlay.classList.add("hidden");
   console.log("Start");
   audio.play();
-  audio.controls = true;
+  //audio.controls = true;
   audio.style.width = "100%";
   document.body.append(audio);
   // capturer.start();
