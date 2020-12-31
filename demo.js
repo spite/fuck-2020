@@ -82,9 +82,9 @@ const overlay = document.querySelector(".overlay");
 const loading = document.querySelector("#loading");
 const progress = loading.querySelector("p.progress");
 const start = document.querySelector("#start");
-start.addEventListener("click", () => {
-  run();
-});
+// start.addEventListener("click", () => {
+//   run();
+// });
 
 const doCapture = !true;
 let capturer;
@@ -259,6 +259,13 @@ async function init() {
     start.style.display = "flex";
     console.log("Ready...");
     //run();
+    overlay.addEventListener(
+      "click",
+      () => {
+        run();
+      },
+      { once: true }
+    );
   }, 100);
 }
 
