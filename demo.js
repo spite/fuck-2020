@@ -93,7 +93,13 @@ function render(t) {
     neko.post.shader.uniforms.white.value = 0;
   }
 
-  if (et >= 47.999 && et < 50.517) {
+  if (et >= 0 && et < 30.313) {
+    neko.final.shader.uniforms.exposure.value = 0.18;
+    neko.final.shader.uniforms.radius.value = 1;
+    neko.blurStrength = 2;
+    neko.post.shader.uniforms.aberration.value = 0.07;
+    neko.distortion = 0.05;
+  } else if (et >= 47.999 && et < 50.517) {
     const v = Maf.map(47.999, 50.517, 0, 1, et);
     neko.final.shader.uniforms.exposure.value = 0.87 * Easings.OutQuint(v);
     neko.final.shader.uniforms.radius.value = 1;

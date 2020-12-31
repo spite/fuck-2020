@@ -104,6 +104,7 @@
         z-index: 10 !important;
       }
       .warning {
+        pointer-events: none;
         width: 100%;
         position: absolute;
         bottom: 0em;
@@ -113,6 +114,15 @@
         align-items: center;
         font-size: 0.75em;
         padding: 2em;
+        text-transform: initial;
+      }
+      .warning p {
+        display: flex;
+        flex-direction: row;
+      }
+      .warning p img {
+        height: 1em;
+        margin-right: 0.5em;
       }
 
       @media (max-width: 600px) {
@@ -144,8 +154,9 @@
       </div>
       <div class="warning">
         <p>
-          <b>WARNING:</b> This experience may potentially trigger seizures for
-          people with photosensitive epilepsy. Viewer discretion is advised.
+          <img src="assets/LIGHTS_ICON.svg" /><b>WARNING:</b> This experience
+          may potentially trigger seizures for people with photosensitive
+          epilepsy. Viewer discretion is advised.
         </p>
       </div>
     </div>
