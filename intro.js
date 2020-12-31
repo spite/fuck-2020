@@ -32,7 +32,11 @@ async function load(preset) {
   loading.style.display = "flex";
   quality.style.display = "none";
   setPreset(preset, nsfw);
-  document.body.requestFullscreen();
+  if (document.body.webkitRequestFullscreen) {
+    document.body.webkitRequestFullscreen();
+  } else {
+    document.body.requestFullscreen();
+  }
   await import("./demo.js");
 }
 
