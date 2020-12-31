@@ -65,16 +65,16 @@ function addRandomSegment(path, time) {
       offset = 1 + Math.random() * 4;
       break;
     case "dark008":
-      offset = 1 + Math.random() * 4;
+      offset = Math.random() * 100;
       break;
     case "dark009":
-      offset = 1 + Math.random() * 4;
+      offset = Math.random() * 100;
       break;
     case "dark010":
-      offset = 1 + Math.random() * 4;
+      offset = Math.random() * 100;
       break;
     case "dark012":
-      offset = 1 + Math.random() * 4;
+      offset = Math.random() * 100;
       break;
   }
   addSegment(path, time, offset);
@@ -113,8 +113,8 @@ addSegment("dark002", 35.366);
 addSegment("dark008", 40.421, null, pathEaser);
 addSegment("dark009", 45.473, null, pathEaser);
 
-addRandomSegment("dark009", 47.999);
-addRandomSegment("dark008", 48.315);
+addRandomSegment("dark008", 47.999);
+addRandomSegment("dark009", 48.315);
 addRandomSegment("dark004", 48.471);
 addRandomSegment("dark008", 48.628);
 addRandomSegment("dark009", 48.785);

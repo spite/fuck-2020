@@ -93,6 +93,19 @@ function render(t) {
     neko.post.shader.uniforms.white.value = 0;
   }
 
+  if (et >= 47.999 && et < 50.517) {
+    const v = Maf.map(47.999, 50.517, 0, 1, et);
+    neko.final.shader.uniforms.exposure.value = 0.87 * Easings.OutQuint(v);
+    neko.final.shader.uniforms.radius.value = 1;
+    neko.blurStrength = 0.58 * Easings.OutQuint(v);
+    neko.post.shader.uniforms.aberration.value = 0.19 * Easings.OutQuint(v);
+  } else {
+    neko.final.shader.uniforms.exposure.value = 0.15;
+    neko.final.shader.uniforms.radius.value = 1;
+    neko.blurStrength = 2;
+    neko.post.shader.uniforms.aberration.value = 0.07;
+  }
+
   if (et < 30.313) {
     neko.badness = 0;
   } else {
@@ -133,12 +146,14 @@ function render(t) {
 
   neko.fucking = getFucking(et);
 
-  neko.final.shader.uniforms.radius.value = params.blurRadius;
-  neko.blurStrength = params.blurStrength;
-  neko.final.shader.uniforms.exposure.value = params.blurExposure;
-  neko.post.shader.uniforms.opacity.value = params.opacity;
-  neko.post.shader.uniforms.aberration.value = params.aberration;
-  neko.distortion = params.distortion;
+  if (params.controls) {
+    neko.final.shader.uniforms.radius.value = params.blurRadius;
+    neko.blurStrength = params.blurStrength;
+    neko.final.shader.uniforms.exposure.value = params.blurExposure;
+    neko.post.shader.uniforms.opacity.value = params.opacity;
+    neko.post.shader.uniforms.aberration.value = params.aberration;
+    neko.distortion = params.distortion;
+  }
 
   neko.render(et, camera);
   requestAnimationFrame(render);
