@@ -100,7 +100,7 @@ class Text extends Scene {
     this.mesh = new Mesh(new PlaneBufferGeometry(1, 1), material);
     this.add(this.mesh);
 
-    const w = (2048 + 512) * settings.textScale;
+    const w = 2048 * settings.textScale;
     const h = 512 * settings.textScale;
     const shadowMaterial = new RawShaderMaterial({
       uniforms: {
@@ -133,8 +133,8 @@ class Text extends Scene {
     this.renderTarget.texture.encoding = sRGBEncoding;
     this.renderTarget.texture.generateMipmaps = true;
     this.camera = new OrthographicCamera(
-      -20 / 2,
-      20 / 2,
+      -16 / 2,
+      16 / 2,
       4 / 2,
       -4 / 2,
       0.1,
