@@ -112,8 +112,9 @@ addRandomSegment("cute002", 30.313);
 addSegment("dark002", 35.366);
 addSegment("dark008", 40.421, null, pathEaser);
 addSegment("dark009", 45.473, null, pathEaser);
-addSegment("dark012", 48.315, null, pathEaser);
 
+addRandomSegment("dark009", 47.999);
+addRandomSegment("dark008", 48.315);
 addRandomSegment("dark004", 48.471);
 addRandomSegment("dark008", 48.628);
 addRandomSegment("dark009", 48.785);
