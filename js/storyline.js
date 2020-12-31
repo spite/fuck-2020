@@ -145,7 +145,7 @@ addSegment("dark007", 90.362);
 addSegment("dark002", 90.943); // FUCK!
 
 addSegment("dark012", 95.999);
-addSegment("dark008", 101.5);
+addSegment("dark008", 101.05);
 addSegment("dark009", 106.103);
 addSegment("dark003", 111.153);
 
