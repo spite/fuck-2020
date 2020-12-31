@@ -3,6 +3,7 @@ import {
   RawShaderMaterial,
 } from "../third_party/three.module.js";
 import { loadTexture } from "../js/loader.js";
+import { settings } from "../js/settings.js";
 
 const vertexShader = `#version 300 es
 precision highp float;
@@ -127,7 +128,7 @@ void main() {
 }
 `;
 
-const matcap = loadTexture("./assets/matcap.jpg");
+const matcap = loadTexture(`./assets/matcap_${settings.textureSize}.jpg`);
 matcap.wrapS = matcap.wrapT = RepeatWrapping;
 
 class CylinderMaterial extends RawShaderMaterial {

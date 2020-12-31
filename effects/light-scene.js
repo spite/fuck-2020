@@ -41,11 +41,15 @@ textCamera.position.z = 0.1;
 textCamera.lookAt(textScene.position);
 textScene.add(textRender.outMesh);
 
-const mapTexture = loadTexture("assets/props.jpg");
+const mapTexture = loadTexture(`assets/props_${settings.textureSize}.jpg`);
 mapTexture.encoding = sRGBEncoding;
 
-const roughnessTexture = loadTexture("assets/props_rough.jpg");
-const normalTexture = loadTexture("assets/props_normal.jpg");
+const roughnessTexture = loadTexture(
+  `assets/props_rough_${settings.textureSize}.jpg`
+);
+const normalTexture = loadTexture(
+  `assets/props_normal_${settings.textureSize}.jpg`
+);
 
 const material = new MeshStandardMaterial({
   color: 0xffffff,
@@ -80,13 +84,17 @@ for (const object of objects) {
   });
 }
 
-const nekoTexture = loadTexture("assets/manekineko_light_AO.jpg");
+const nekoTexture = loadTexture(
+  `assets/manekineko_light_AO_${settings.textureSize}.jpg`
+);
 nekoTexture.encoding = sRGBEncoding;
 
 const nekoRoughnessTexture = loadTexture(
-  "assets/manekineko_light_roughness.jpg"
+  `assets/manekineko_light_roughness_${settings.textureSize}.jpg`
 );
-const nekoNormalTexture = loadTexture("assets/manekineko_light_normal.jpg");
+const nekoNormalTexture = loadTexture(
+  `assets/manekineko_light_normal_${settings.textureSize}.jpg`
+);
 
 const nekoMat = new MeshStandardMaterial({
   color: 0xffffff,
@@ -151,7 +159,7 @@ function initHdrEnv(renderer) {
     //.setDataType(UnsignedByteType)
     .setDataType(FloatType)
     .setPath("assets/")
-    .load(settings.hdriMap, (texture) => {
+    .load(`lythwood_room_${settings.textureSize}.hdr`, (texture) => {
       radianceMap = pmremGenerator.fromEquirectangular(texture).texture;
       pmremGenerator.dispose();
       material.envMap = radianceMap;

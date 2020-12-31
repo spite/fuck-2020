@@ -103,7 +103,6 @@ precision highp float;
 uniform sampler2D inputTexture;
 uniform float opacity;
 uniform float aberration;
-uniform sampler2D crackMap;
 uniform float white;
 
 in vec2 vUv;
@@ -114,7 +113,7 @@ ${chromaticAberration}
 ${vignette}
 
 void main() {
-  vec2 dir = vec2(0.);// (texture(crackMap, vUv).xy -.5)/10.;
+  vec2 dir = vec2(0.);
   vec4 c = chromaticAberration(inputTexture, vUv, aberration, dir);
   //c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
   c += white;
@@ -297,7 +296,6 @@ const finalShader = new RawShaderMaterial({
     aberration: { value: 1 },
     opacity: { value: 1 },
     white: { value: 0 },
-    crackMap: { value: loadTexture("assets/NormalMap.png") },
   },
   vertexShader: orthoVs,
   fragmentShader: finalFs,

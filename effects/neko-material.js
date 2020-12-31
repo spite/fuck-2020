@@ -5,8 +5,9 @@ import {
 import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
 import { loadTexture } from "../js/loader.js";
+import { settings } from "../js/settings.js";
 
-const dark = loadTexture("assets/manekineko_dark_2.jpg");
+const dark = loadTexture(`assets/manekineko_dark_${settings.textureSize}.jpg`);
 dark.encoding = sRGBEncoding;
 
 class NekoMaterial extends MeshStandardMaterial {

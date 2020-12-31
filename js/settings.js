@@ -5,7 +5,7 @@ const low = {
   chromaticSteps: 6,
   blurSteps: 3,
   reflectionSize: 512,
-  hdriMap: "lythwood_room_1k.hdr",
+  textureSize: "1k",
   textScale: 0.5,
   NSFW: true,
 };
@@ -17,7 +17,7 @@ const medium = {
   chromaticSteps: 12,
   blurSteps: 4,
   reflectionSize: 1024,
-  hdriMap: "lythwood_room_2k.hdr",
+  textureSize: "2k",
   textScale: 1,
   NSFW: true,
 };
@@ -29,8 +29,8 @@ const high = {
   chromaticSteps: 24,
   blurSteps: 5,
   reflectionSize: 2048,
-  hdriMap: "lythwood_room_2k.hdr",
   textScale: 1,
+  textureSize: "4k",
   NSFW: true,
 };
 
@@ -41,8 +41,8 @@ const ultra = {
   chromaticSteps: 100,
   blurSteps: 5,
   reflectionSize: 4096,
-  hdriMap: "lythwood_room_4k.hdr",
   textScale: 1,
+  textureSize: "4k",
   NSFW: true,
 };
 
