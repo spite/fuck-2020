@@ -16,6 +16,8 @@ code: spite
 Modelled and animated with Blender.
 
 Coded with threejs, WebGL2, invaluable shaders from ShaderToy, openType.js.
+Build with esbuild.
+Capture with CCapture.js.
 
 Composed with BitWig Studio. FUCK Ableton Live.
 
