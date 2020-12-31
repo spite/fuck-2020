@@ -16,8 +16,8 @@ presetsDiv.firstChild.remove();
 async function load(preset) {
   loading.style.display = "flex";
   quality.style.display = "none";
-  setPreset(preset, !true);
-  //document.body.requestFullscreen();
+  setPreset(preset, true);
+  document.body.requestFullscreen();
   await import("./demo.js");
 }
 

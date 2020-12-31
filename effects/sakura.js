@@ -113,9 +113,9 @@ class Sakura extends Group {
       for (let i = 0; i < count; i++) {
         const petal = this.petals[i];
         const scale = petal.scale;
-        const r = 5 * scale;
+        const r = 2.5 * scale;
         const f = (t + 100) * scale;
-        petal.position.y = Maf.mod(-(t + 50) * 5 * scale, 30) - 15;
+        petal.position.y = Maf.mod(-(t + 50) * 2.5 * scale, 30) - 15;
         petal.position.x = petal.original.x + r * Math.cos(f);
         petal.position.z = petal.original.y + r * Math.sin(f);
 

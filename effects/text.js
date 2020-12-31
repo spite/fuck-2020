@@ -40,7 +40,7 @@ vec3 gaussianBlur(in sampler2D map, in vec2 uv) {
   vec2 fragCoord = uv * resolution;
 
   //declare stuff
-  const int mSize = 11*2;
+  const int mSize = 11;
   const int kSize = (mSize-1)/2;
   float kernel[mSize];
   vec3 final_colour = vec3(0.0);
@@ -72,8 +72,8 @@ vec3 gaussianBlur(in sampler2D map, in vec2 uv) {
     
 void main() {
   vec4 c = texture(map, vUv);
-  float shadow = 2.*gaussianBlur(map, vUv).r;
-  color = vec4(vec3(1.2*c.r)*textColor+vec3(64.,0.,0.)/255., 2.*shadow*opacity);
+  float shadow = 4.*gaussianBlur(map, vUv).r;
+  color = vec4(vec3(1.2*c.r)*textColor, 2.*shadow*opacity);
 }`;
 
 const fontMap = new Map();

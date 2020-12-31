@@ -72,6 +72,8 @@ camera.lookAt(new Vector3(0, 0, 0));
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.screenSpacePanning = true;
 
+const intro = document.querySelector(".intro");
+const outro = document.querySelector(".outro");
 const overlay = document.querySelector(".overlay");
 const loading = document.querySelector("#loading");
 const progress = loading.querySelector("p.progress");
@@ -82,7 +84,7 @@ start.addEventListener("click", () => {
 
 // const capturer = new CCapture({ format: "webm", framerate: 60 });
 // window.capturer = capturer;
-// let startTime;
+
 // window.stop = function () {
 //   capturer.stop();
 //   capturer.save();
@@ -198,9 +200,13 @@ function render(t) {
   }
 
   neko.render(et, camera);
-  //capturer.capture(canvas);
+  // capturer.capture(canvas);
 
-  requestAnimationFrame(render);
+  if (et > 122) {
+    stop();
+  } else {
+    requestAnimationFrame(render);
+  }
 }
 
 function resize() {
@@ -227,6 +233,8 @@ onProgress((p) => {
 });
 
 async function init() {
+  intro.style.display = "flex";
+  outro.style.display = "none";
   loading.style.display = "flex";
   console.log("Loading...");
   await allLoaded();
@@ -252,9 +260,16 @@ function run() {
   audio.controls = true;
   audio.style.width = "100%";
   document.body.append(audio);
-  //startTime = performance.now();
-  //capturer.start();
+  // capturer.start();
   render();
+}
+
+function stop() {
+  intro.style.display = "none";
+  outro.style.display = "flex";
+  overlay.classList.remove("hidden");
+  audio.pause();
+  audio.currentTime = 0;
 }
 
 init();

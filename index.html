@@ -49,6 +49,7 @@
         font-size: max(20px, 1vw);
         text-transform: uppercase;
         transition: opacity 500ms ease-out;
+        flex-direction: column;
       }
       .overlay.hidden {
         pointer-events: none;
@@ -57,13 +58,17 @@
       .intro {
         background-color: #e9d9ca;
         color: #524842;
-        flex-direction: column;
       }
-      .intro img.logo {
+      .outro {
+        display: none;
+      }
+      .intro img.logo,
+      .outro img.logo {
         height: 35%;
         margin-bottom: 1vh;
       }
-      .intro img.start {
+      .intro img.start,
+      .outro img.start {
         height: 11%;
         margin-bottom: 6vh;
       }
@@ -102,6 +107,43 @@
       }
       .dg.ac {
         z-index: 10 !important;
+      }
+      .happy {
+        color: #01fffe;
+      }
+      .first {
+        color: #01fffe;
+        letter-spacing: 0.75em;
+      }
+      .credits a {
+        color: #01fffe;
+        text-decoration: none;
+      }
+      .credits a:hover {
+        text-decoration: underline;
+      }
+      .credits span {
+        padding: 0 0.5em;
+        color: #ff33ff;
+      }
+      .line {
+        height: 2px;
+        width: 75%;
+      }
+      .icons {
+        height: 24px;
+        margin-bottom: 10px;
+      }
+      .outro .first {
+        margin-bottom: 10vh;
+        position: relative;
+      }
+      .ornot {
+        height: 3em;
+        bottom: 1em;
+        position: absolute;
+        right: 0;
+        margin-right: -3em;
       }
       .warning {
         pointer-events: none;
@@ -157,6 +199,22 @@
           <img src="assets/LIGHTS_ICON.svg" /><b>WARNING:</b> This experience
           may potentially trigger seizures for people with photosensitive
           epilepsy. Viewer discretion is advised.
+        </p>
+      </div>
+    </div>
+    <div class="outro overlay" id="outro">
+      <img class="logo" src="assets/DARK_LOGO.svg" />
+      <img class="start" src="assets/DARK_BUTTON.svg" />
+      <div class="section" id="happy">
+        <p class="first">
+          Happy 2021<img class="ornot" src="assets/DARK_OR_NOT.svg" />
+        </p>
+        <img class="icons" src="assets/DARK_ICONS.svg" />
+        <img class="line" src="assets/DARK_LINE.svg" />
+        <p class="credits">
+          <a href="https://www.instagram.com/acidbeat/">@acidbeat</a
+          ><span>·</span><a href="https://twitter.com/gloom303">@gloom303</a
+          ><span>·</span><a href="https://twitter.com/thespite">@thespite</a>
         </p>
       </div>
     </div>
