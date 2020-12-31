@@ -225,7 +225,11 @@ function resize() {
 
 window.addEventListener("resize", resize);
 
-const audio = loadAudio("assets/track_long.ogg");
+const test = new Audio();
+const canPlayAac = test.canPlayType("audio/aac");
+const audio = loadAudio(
+  canPlayAac ? "assets/track_long.aac" : "assets/track_long.ogg"
+);
 
 onProgress((p) => {
   progress.textContent = `${p.toFixed(0)}%`;
