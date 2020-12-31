@@ -18,7 +18,6 @@ import { getFucking } from "./effects/data.js";
 
 const camera = new PerspectiveCamera(27, 1, 0.1, 200);
 
-const gui = new dat.GUI();
 const params = {
   controls: !true,
   glitch: 0,
