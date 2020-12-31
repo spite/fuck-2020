@@ -6,6 +6,8 @@ const low = {
   blurSteps: 3,
   reflectionSize: 512,
   hdriMap: "lythwood_room_1k.hdr",
+  textScale: 0.5,
+  NSFW: true,
 };
 
 const medium = {
@@ -16,6 +18,8 @@ const medium = {
   blurSteps: 4,
   reflectionSize: 1024,
   hdriMap: "lythwood_room_2k.hdr",
+  textScale: 1,
+  NSFW: true,
 };
 
 const high = {
@@ -26,6 +30,8 @@ const high = {
   blurSteps: 5,
   reflectionSize: 2048,
   hdriMap: "lythwood_room_2k.hdr",
+  textScale: 1,
+  NSFW: true,
 };
 
 const ultra = {
@@ -36,6 +42,8 @@ const ultra = {
   blurSteps: 5,
   reflectionSize: 4096,
   hdriMap: "lythwood_room_4k.hdr",
+  textScale: 1,
+  NSFW: true,
 };
 
 const presets = {
@@ -47,8 +55,9 @@ const presets = {
 
 let settings = high;
 
-function setPreset(quality) {
+function setPreset(quality, NSFW) {
   settings = presets[quality] ? presets[quality] : high;
+  settings.NSFW = NSFW;
 }
 
 export { settings, presets, setPreset };

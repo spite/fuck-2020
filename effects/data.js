@@ -1,5 +1,6 @@
 import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
+import { settings } from "../js/settings.js";
 
 const fuckings = [
   "Coronavirus",
@@ -78,6 +79,10 @@ function isEven(n) {
   return n % 2 == 0;
 }
 
+function getFuck() {
+  return settings.NSFW ? "FUCK" : "F**K";
+}
+
 function getFucking(t) {
   if (t >= 70.736 && t < 75.801) {
     const v = Maf.map(70.736, 75.801, 0, 1, t);
@@ -105,19 +110,18 @@ function getFucking(t) {
   }
   if (t > 111.09) {
     const v = Maf.clamp(t - 111.09, 0, 1);
-    return { text: "FUCK 2020", opacity: v, color: 0xffffff };
+    return { text: `${getFuck()} 2020`, opacity: v, color: 0xffffff };
   }
 
   const et = t - 30.313;
   const beatDuration = 1 * 0.631;
   const beats = Math.floor(et / beatDuration) - 1;
 
-  console.log(beats);
   if (beats >= 27 && beats < 31) {
     return { text: "", opacity: 0, color: 0xffffff };
   }
 
-  const text = isEven(beats) ? fuckings[beats / 2] : "FUCK";
+  const text = isEven(beats) ? fuckings[beats / 2] : getFuck();
   const opacity = Easings.InOutQuint(
     Maf.parabola(Maf.mod(et, beatDuration) / beatDuration, 1)
   );

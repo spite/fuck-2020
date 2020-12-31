@@ -80,13 +80,13 @@ start.addEventListener("click", () => {
   run();
 });
 
-const capturer = new CCapture({ format: "webm", framerate: 60 });
-window.capturer = capturer;
-let startTime;
-window.stop = function () {
-  capturer.stop();
-  capturer.save();
-};
+// const capturer = new CCapture({ format: "webm", framerate: 60 });
+// window.capturer = capturer;
+// let startTime;
+// window.stop = function () {
+//   capturer.stop();
+//   capturer.save();
+// };
 
 function render(t) {
   const et = audio.currentTime;
@@ -198,7 +198,7 @@ function render(t) {
   }
 
   neko.render(et, camera);
-  capturer.capture(canvas);
+  //capturer.capture(canvas);
 
   requestAnimationFrame(render);
 }
@@ -249,10 +249,10 @@ function run() {
   overlay.classList.add("hidden");
   console.log("Start");
   audio.play();
-  //audio.controls = true;
+  audio.controls = true;
   audio.style.width = "100%";
   document.body.append(audio);
-  startTime = performance.now();
+  //startTime = performance.now();
   //capturer.start();
   render();
 }

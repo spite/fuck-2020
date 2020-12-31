@@ -13,6 +13,7 @@ import {
 } from "../third_party/three.module.js";
 import { loadTTF } from "../js/loader.js";
 import { getFBO } from "../js/FBO.js";
+import { settings } from "../js/settings.js";
 
 import { shader as vertexShader } from "../shaders/ortho-vs.js";
 
@@ -98,8 +99,8 @@ class Text extends Scene {
     this.mesh = new Mesh(new PlaneBufferGeometry(1, 1), material);
     this.add(this.mesh);
 
-    const w = 2048;
-    const h = 512;
+    const w = (2048 + 512) * settings.textScale;
+    const h = 512 * settings.textScale;
     const shadowMaterial = new RawShaderMaterial({
       uniforms: {
         map: { value: null },
@@ -115,7 +116,10 @@ class Text extends Scene {
     this.outMesh.scale.setScalar(0.9);
     this.textMesh = new Mesh(new PlaneBufferGeometry(1, 1), outMaterial);
     this.shadowMesh = new Mesh(
-      new PlaneBufferGeometry(w / 125, h / 125),
+      new PlaneBufferGeometry(
+        w / (125 * settings.textScale),
+        h / (125 * settings.textScale)
+      ),
       shadowMaterial
     );
     this.shadowMesh.position.z = -0.1;
@@ -127,8 +131,8 @@ class Text extends Scene {
     this.renderTarget = getFBO(w, h);
     this.renderTarget.texture.encoding = sRGBEncoding;
     this.camera = new OrthographicCamera(
-      -16 / 2,
-      16 / 2,
+      -20 / 2,
+      20 / 2,
       4 / 2,
       -4 / 2,
       0.1,
