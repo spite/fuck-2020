@@ -9,6 +9,7 @@ import {
   DoubleSide,
 } from "../third_party/three.module.js";
 import { loadObject } from "../js/loader.js";
+import Maf from "../third_party/Maf.js";
 
 const sakuraVS = `#version 300 es
 precision highp float;
@@ -68,6 +69,7 @@ class Sakura extends Group {
       const mesh = new InstancedMesh(geometry, material, count);
       mesh.instanceMatrix.setUsage(DynamicDrawUsage);
       this.add(mesh);
+      this.petals = [];
       this.mesh = mesh;
       this.init();
     });
@@ -89,6 +91,13 @@ class Sakura extends Group {
 
         dummy.scale.setScalar(0.5 + 0.7 * Math.random());
 
+        this.petals.push({
+          position: dummy.position.clone(),
+          original: dummy.position.clone(),
+          rotation: dummy.rotation.clone(),
+          scale: dummy.scale.x,
+        });
+
         dummy.updateMatrix();
 
         this.mesh.setMatrixAt(i, dummy.matrix);
@@ -98,20 +107,21 @@ class Sakura extends Group {
     }
   }
 
-  update(dt) {
-    const q = new Quaternion().setFromAxisAngle(
-      new Vector3(1, 0.5, 0).normalize(),
-      Math.PI / 40
-    );
+  update(t) {
     if (this.mesh) {
       const r = 30;
       for (let i = 0; i < count; i++) {
-        this.mesh.getMatrixAt(i, dummy.matrix);
+        const petal = this.petals[i];
+        const scale = petal.scale;
+        const r = 5 * scale;
+        const f = (t + 100) * scale;
+        petal.position.y = Maf.mod(-(t + 50) * 5 * scale, 30) - 15;
+        petal.position.x = petal.original.x + r * Math.cos(f);
+        petal.position.z = petal.original.y + r * Math.sin(f);
 
-        dummy.matrix.decompose(dummy.position, dummy.quaternion, dummy.scale);
-        dummy.position.y -= 0.11 * dummy.scale.x;
-        if (dummy.position.y < -15) dummy.position.y = 15;
-        dummy.quaternion.multiply(q);
+        petal.rotation.y = scale * (100 + 10 * t);
+        dummy.position.copy(petal.position);
+        dummy.rotation.copy(petal.rotation);
         dummy.updateMatrix();
 
         this.mesh.setMatrixAt(i, dummy.matrix);

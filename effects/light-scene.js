@@ -173,7 +173,7 @@ function update(t) {
   objectMap["strawberry"].rotation.y = t;
   objectMap["heart"].rotation.y = 0.75 * t;
 
-  sakura.update();
+  sakura.update(t);
 }
 
 let previousText = "";
