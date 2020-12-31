@@ -10,9 +10,11 @@ music: gloom
 
 code: spite
 
-Modelled and animated with Blender
+Modelled and animated with Blender.
 
-Coded with threejs, WebGL2
+Coded with threejs, WebGL2, invaluable shaders from ShaderToy, openType.js.
+
+Composed with BitWig Studio. FUCK Ableton Live.
 
 Shaders:
 - https://www.shadertoy.com/view/tsX3RN
