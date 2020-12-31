@@ -25,6 +25,9 @@ import {
   scene as lightScene,
   update as updateLightScene,
   init as initLightScene,
+  render as renderLightScene,
+  setText as setLightText,
+  setSize as setLightSize,
 } from "./light-scene.js";
 import {
   render as renderDarkScene,
@@ -32,7 +35,7 @@ import {
   setSize as setDarkSize,
   setDistortion,
   setExplosion,
-  setText,
+  setText as setDarkText,
   init as initDarkScene,
   update as updateDarkScene,
 } from "./dark-scene.js";
@@ -115,7 +118,7 @@ void main() {
   vec4 c = chromaticAberration(inputTexture, vUv, aberration, dir);
   //c *= opacity * vignette(vUv, 1.5 * opacity, (1.-opacity)*4.);
   c += white;
-  color = c;
+  color = c*opacity;
 }
 `;
 
@@ -301,7 +304,7 @@ const finalShader = new RawShaderMaterial({
 });
 
 class Effect extends glEffectBase {
-  constructor(renderer, gui) {
+  constructor(renderer) {
     super(renderer);
 
     this.badness = 0;
@@ -311,7 +314,6 @@ class Effect extends glEffectBase {
     this.glitch2Amount = 0;
     this.fucking = { text: "", color: 0, opacity: 0 };
 
-    this.gui = gui;
     this.post = new ShaderPass(this.renderer, finalShader);
     this.post.fbo.texture.encoding = sRGBEncoding;
     this.glitch = new ShaderPass(this.renderer, glitchShader);
@@ -368,6 +370,7 @@ class Effect extends glEffectBase {
     this.highlight.setSize(w, h);
     this.glitch.setSize(w, h);
     setDarkSize(w, h);
+    setLightSize(w, h);
 
     let tw = w;
     let th = h;
@@ -395,7 +398,7 @@ class Effect extends glEffectBase {
   render(t, camera) {
     if (this.badness >= 0.5) {
       updateDarkScene(t);
-      setText(
+      setDarkText(
         this.renderer,
         this.fucking.text,
         this.fucking.color,
@@ -405,6 +408,33 @@ class Effect extends glEffectBase {
       setExplosion(this.explosion);
       updateEnv(this.renderer);
     } else {
+      if (t >= 5 && t < 10) {
+        const v = Maf.map(5, 10, 0, 1, t);
+        setLightText(
+          this.renderer,
+          "Happy 2020!",
+          0xe6c1b6,
+          Maf.parabola(v, 1)
+        );
+      } else if (t >= 10 && t < 15) {
+        const v = Maf.map(10, 15, 0, 1, t);
+        setLightText(
+          this.renderer,
+          "It's going to be an amazing year!",
+          0xe6c1b6,
+          Maf.parabola(v, 1)
+        );
+      } else if (t >= 15 && t < 20) {
+        const v = Maf.map(15, 20, 0, 1, t);
+        setLightText(
+          this.renderer,
+          "Everything will be fine!",
+          0xe6c1b6,
+          Maf.parabola(v, 1)
+        );
+      } else {
+        setLightText(this.renderer, "", 0xffffff, 0);
+      }
       updateLightScene(t);
     }
 
@@ -412,7 +442,7 @@ class Effect extends glEffectBase {
 
     this.renderer.setRenderTarget(this.fbo);
     if (this.badness < 0.5) {
-      this.renderer.render(lightScene, camera);
+      renderLightScene(t, this.renderer, camera);
     } else {
       renderDarkScene(t, this.renderer, camera);
     }

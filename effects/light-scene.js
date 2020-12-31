@@ -8,6 +8,7 @@ import {
   Group,
   Vector2,
   BackSide,
+  OrthographicCamera,
   RectAreaLight,
   Mesh,
   IcosahedronBufferGeometry,
@@ -19,10 +20,26 @@ RectAreaLightUniformsLib.init();
 import { addPromise, loadTexture, loadObject } from "../js/loader.js";
 import Maf from "../third_party/Maf.js";
 import { settings } from "../js/settings.js";
+import { Text } from "./text.js";
 
 const scene = new Scene();
 scene.rotation.y = Math.PI;
 scene.add(sakura);
+
+const textRender = new Text("hand");
+
+const textScene = new Scene();
+const textCamera = new OrthographicCamera(
+  -20 / 2,
+  20 / 2,
+  1.2 / 2,
+  -1.2 / 2,
+  0.1,
+  20
+);
+textCamera.position.z = 0.1;
+textCamera.lookAt(textScene.position);
+textScene.add(textRender.outMesh);
 
 const mapTexture = loadTexture("assets/props.jpg");
 mapTexture.encoding = sRGBEncoding;
@@ -159,8 +176,33 @@ function update(t) {
   sakura.update();
 }
 
+let previousText = "";
+function setText(renderer, text, color, opacity) {
+  if (text !== previousText) {
+    textRender.render(renderer, text);
+    previousText = text;
+  }
+  textRender.setColor(color, opacity);
+}
+
 function init(renderer, camera) {
   renderer.compile(scene, camera);
 }
 
-export { scene, init, initHdrEnv, update };
+function render(t, renderer, camera) {
+  renderer.render(scene, camera);
+  renderer.autoClear = false;
+  renderer.render(textScene, textCamera);
+  renderer.autoClear = true;
+}
+
+function setSize(w, h) {
+  const ar = w / h;
+  textCamera.left = (-ar * 20) / 2;
+  textCamera.right = (ar * 20) / 2;
+  textCamera.top = 20 / 2;
+  textCamera.bottom = -20 / 2;
+  textCamera.updateProjectionMatrix();
+}
+
+export { scene, init, initHdrEnv, render, update, setText, setSize };

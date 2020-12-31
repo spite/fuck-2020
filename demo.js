@@ -19,7 +19,6 @@ import { getFucking } from "./effects/data.js";
 const camera = new PerspectiveCamera(27, 1, 0.1, 200);
 
 const gui = new dat.GUI();
-
 const params = {
   controls: !true,
   glitch: 0,
@@ -33,25 +32,26 @@ const params = {
   explosion: 0,
 };
 
-const postFolder = gui.addFolder("Post");
-postFolder.add(params, "controls");
-postFolder.add(params, "glitch", 0, 1, 0.01);
-postFolder.add(params, "blurExposure", 0, 3, 0.01);
-postFolder.add(params, "blurRadius", 0, 1, 0.01);
-postFolder.add(params, "blurStrength", 0, 2, 0.01);
-postFolder.add(params, "aberration", 0, 1, 0.01);
-postFolder.add(params, "opacity", 0, 1, 0.01);
-postFolder.add(params, "distortion", 0, 0.5, 0.01);
-postFolder.add(params, "badness", 0, 1, 0.01);
-postFolder.add(params, "explosion", 0, 1, 0.01);
-postFolder.open();
+// const gui = new dat.GUI();
+// const postFolder = gui.addFolder("Post");
+// postFolder.add(params, "controls");
+// postFolder.add(params, "glitch", 0, 1, 0.01);
+// postFolder.add(params, "blurExposure", 0, 3, 0.01);
+// postFolder.add(params, "blurRadius", 0, 1, 0.01);
+// postFolder.add(params, "blurStrength", 0, 2, 0.01);
+// postFolder.add(params, "aberration", 0, 1, 0.01);
+// postFolder.add(params, "opacity", 0, 1, 0.01);
+// postFolder.add(params, "distortion", 0, 0.5, 0.01);
+// postFolder.add(params, "badness", 0, 1, 0.01);
+// postFolder.add(params, "explosion", 0, 1, 0.01);
+// postFolder.open();
 
 const canvas = document.createElement("canvas");
-3 * document.body.append(canvas);
+document.body.append(canvas);
 
 const renderer = new WebGLRenderer({
   canvas,
-  preserveDrawingBuffer: false,
+  preserveDrawingBuffer: true, //false,
   antialias: true,
   powerPreference: "high-performance",
 });
@@ -62,7 +62,7 @@ renderer.outputEncoding = sRGBEncoding;
 renderer.toneMapping = ACESFilmicToneMapping;
 
 const effects = [];
-const neko = new NekoEffect(renderer, gui);
+const neko = new NekoEffect(renderer);
 
 effects.push(neko);
 
@@ -80,8 +80,17 @@ start.addEventListener("click", () => {
   run();
 });
 
+const capturer = new CCapture({ format: "webm", framerate: 60 });
+window.capturer = capturer;
+let startTime;
+window.stop = function () {
+  capturer.stop();
+  capturer.save();
+};
+
 function render(t) {
   const et = audio.currentTime;
+  // const et = (performance.now() - startTime) / 1000; //audio.currentTime;
   if (!params.controls) {
     keyframe(et, camera);
   }
@@ -93,6 +102,7 @@ function render(t) {
     neko.post.shader.uniforms.white.value = 0;
   }
 
+  neko.post.shader.uniforms.opacity.value = 1;
   if (et >= 0 && et < 30.313) {
     neko.final.shader.uniforms.exposure.value = 0.18;
     neko.final.shader.uniforms.radius.value = 1;
@@ -119,6 +129,14 @@ function render(t) {
     neko.blurStrength = v * 2;
     neko.post.shader.uniforms.aberration.value = v * 0.38;
     neko.distortion = v * 0.5;
+  } else if (et >= 119 && et < 123) {
+    const v = Maf.map(119, 122, 0, 1, et);
+    neko.final.shader.uniforms.exposure.value = 0.81;
+    neko.final.shader.uniforms.radius.value = 1;
+    neko.blurStrength = 2;
+    neko.post.shader.uniforms.aberration.value = 0.38;
+    neko.distortion = 0.5;
+    neko.post.shader.uniforms.opacity.value = 1 - v;
   } else {
     neko.final.shader.uniforms.exposure.value = 0.15;
     neko.final.shader.uniforms.radius.value = 1;
@@ -164,6 +182,9 @@ function render(t) {
     const v = Maf.map(90.943, 119, 0.005, 0.1, et);
     neko.explosion = v;
   }
+  if (et >= 119) {
+    neko.explosion = 1;
+  }
 
   neko.fucking = getFucking(et);
 
@@ -177,6 +198,8 @@ function render(t) {
   }
 
   neko.render(et, camera);
+  capturer.capture(canvas);
+
   requestAnimationFrame(render);
 }
 
@@ -197,7 +220,7 @@ function resize() {
 
 window.addEventListener("resize", resize);
 
-const audio = loadAudio("assets/track.ogg");
+const audio = loadAudio("assets/track_long.ogg");
 
 onProgress((p) => {
   progress.textContent = `${p.toFixed(0)}%`;
@@ -226,9 +249,11 @@ function run() {
   overlay.classList.add("hidden");
   console.log("Start");
   audio.play();
-  audio.controls = true;
+  //audio.controls = true;
   audio.style.width = "100%";
   document.body.append(audio);
+  startTime = performance.now();
+  //capturer.start();
   render();
 }
 

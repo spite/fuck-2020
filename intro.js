@@ -17,7 +17,7 @@ async function load(preset) {
   loading.style.display = "flex";
   quality.style.display = "none";
   setPreset(preset);
-  //document.body.requestFullscreen();
+  document.body.requestFullscreen();
   await import("./demo.js");
 }
 

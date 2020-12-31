@@ -13,11 +13,8 @@ import {
 } from "../third_party/three.module.js";
 import { loadTTF } from "../js/loader.js";
 import { getFBO } from "../js/FBO.js";
-import { SVGLoader } from "../third_party/SVGLoader.js";
-import Easings from "../third_party/easings.js";
 
 import { shader as vertexShader } from "../shaders/ortho-vs.js";
-import { blur5 } from "../shaders/fast-separable-gaussian-blur.js";
 
 const fragmentShader = `#version 300 es
 precision highp float;
@@ -30,16 +27,52 @@ in vec2 vUv;
 
 out vec4 color;
 
-${blur5}
+// https://www.shadertoy.com/view/XdfGDH
 
+
+float normpdf(in float x, in float sigma){
+	return 0.39894*exp(-0.5*x*x/(sigma*sigma))/sigma;
+}
+
+vec3 gaussianBlur(in sampler2D map, in vec2 uv) {
+  vec2 resolution = vec2(textureSize(map, 0));
+  vec2 fragCoord = uv * resolution;
+
+  //declare stuff
+  const int mSize = 11;
+  const int kSize = (mSize-1)/2;
+  float kernel[mSize];
+  vec3 final_colour = vec3(0.0);
+  
+  //create the 1-D kernel
+  float sigma = 7.0;
+  float Z = 0.0;
+  for (int j = 0; j <= kSize; ++j)
+  {
+    kernel[kSize+j] = kernel[kSize-j] = normpdf(float(j), sigma);
+  }
+  
+  //get the normalization factor (as the gaussian has been clamped)
+  for (int j = 0; j < mSize; ++j)
+  {
+    Z += kernel[j];
+  }
+  
+  //read out the texels
+  for (int i=-kSize; i <= kSize; ++i)
+  {
+    for (int j=-kSize; j <= kSize; ++j)
+    {
+      final_colour += kernel[kSize+j]*kernel[kSize+i]*texture(map, (fragCoord.xy+vec2(float(i),float(j))) / resolution.xy).rgb;
+    }
+  }
+  return final_colour;
+}
+    
 void main() {
   vec4 c = texture(map, vUv);
-  vec4 s1 = blur5(map, vUv, vec2(4.,0.));
-  vec4 s2 = blur5(map, vUv, vec2(0.,4.));
-  vec4 s3 = blur5(map, vUv, vec2(8.,0.));
-  vec4 s4 = blur5(map, vUv, vec2(0.,8.));
-  float shadow = (s1.r+s2.r+s3.r+s4.r)/4.;
-  color = vec4(vec3(2.*c.r)*textColor, 2.*shadow*opacity);
+  float shadow = 4.*gaussianBlur(map, vUv).r;
+  color = vec4(vec3(1.2*c.r)*textColor, 2.*shadow*opacity);
 }`;
 
 const fontMap = new Map();
@@ -48,9 +81,9 @@ loadTTF("assets/ultra.ttf", (font) => {
   fontMap.set("ultra", font);
 });
 
-// loadTTF("assets/bellota.ttf", (font) => {
-//   fontMap.set("bellota", font);
-// });
+loadTTF("assets/hand.ttf", (font) => {
+  fontMap.set("hand", font);
+});
 
 const material = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide });
 const outMaterial = new MeshBasicMaterial({
@@ -86,11 +119,7 @@ class Text extends Scene {
       shadowMaterial
     );
     this.shadowMesh.position.z = -0.1;
-    this.strokeText = new Group();
-    this.outMesh.add(this.strokeText);
     this.outMesh.add(this.shadowMesh);
-    // this.outMesh.add(this.textMesh);
-    this.strokeText.position.z = -0.1;
 
     this.font = null;
     this.fontName = fontName;
@@ -135,8 +164,8 @@ class Text extends Scene {
     this.mesh.position.y = -0.5 * h;
 
     this.textMesh.geometry = geometry;
-    this.textMesh.position.x = -0.5 * w; // * this.outMesh.scale.x;
-    this.textMesh.position.y = -0.5 * h; //* this.outMesh.scale.y;
+    this.textMesh.position.x = -0.5 * w;
+    this.textMesh.position.y = -0.5 * h;
 
     renderer.setRenderTarget(this.renderTarget);
     renderer.render(this, this.camera);
