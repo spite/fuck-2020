@@ -27,3 +27,8 @@ Shaders:
 - https://www.shadertoy.com/view/XdfGDH
 - https://www.shadertoy.com/view/XssGz8
 - https://www.airtightinteractive.com/demos/js/badtvshader/
+
+Fonts:
+- https://www.ffonts.net/iCiel-Gotham-Ultra.font
+- https://fonts.google.com/specimen/Bellota
+- https://fonts.google.com/specimen/Just+Another+Hand
