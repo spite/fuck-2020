@@ -26,3 +26,4 @@ Shaders:
 - https://www.shadertoy.com/view/MscGzl
 - https://www.shadertoy.com/view/XdfGDH
 - https://www.shadertoy.com/view/XssGz8
+- https://www.airtightinteractive.com/demos/js/badtvshader/
