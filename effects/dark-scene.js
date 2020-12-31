@@ -133,7 +133,7 @@ rectLight.position.set(-3, 1.5, -5);
 rectLight.lookAt(0, 0, 0);
 scene.add(rectLight);
 
-const rectLight2 = new RectAreaLight(0x00aaff, intensity, width, height);
+const rectLight2 = new RectAreaLight(0x00d3ff, intensity, width, height);
 rectLight2.position.set(4.8, 3.8, 5.7);
 rectLight2.lookAt(0, 0, 0);
 scene.add(rectLight2);

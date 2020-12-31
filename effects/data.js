@@ -125,7 +125,7 @@ function getFucking(t) {
   return {
     text,
     opacity,
-    color: isEven(beats) ? 0xffffff : alternate ? 0xff00ff : 0x00ffff,
+    color: isEven(beats) ? 0xffffff : alternate ? 0xf900ff : 0x00d3ff,
   };
 }
 

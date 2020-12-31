@@ -60,6 +60,22 @@ function addRandomSegment(path, time) {
       break;
     case "cute005":
       offset = 0 + Math.random() * 1.5;
+      break;
+    case "dark004":
+      offset = 1 + Math.random() * 4;
+      break;
+    case "dark008":
+      offset = 1 + Math.random() * 4;
+      break;
+    case "dark009":
+      offset = 1 + Math.random() * 4;
+      break;
+    case "dark010":
+      offset = 1 + Math.random() * 4;
+      break;
+    case "dark012":
+      offset = 1 + Math.random() * 4;
+      break;
   }
   addSegment(path, time, offset);
 }
@@ -96,7 +112,25 @@ addRandomSegment("cute002", 30.313);
 addSegment("dark002", 35.366);
 addSegment("dark008", 40.421, null, pathEaser);
 addSegment("dark009", 45.473, null, pathEaser);
-addSegment("dark012", 50.517, null, pathEaser);
+addSegment("dark012", 48.315, null, pathEaser);
+
+addRandomSegment("dark004", 48.471);
+addRandomSegment("dark008", 48.628);
+addRandomSegment("dark009", 48.785);
+addRandomSegment("dark012", 48.943);
+addRandomSegment("dark008", 49.103);
+addRandomSegment("dark009", 49.4);
+addRandomSegment("dark012", 49.556);
+addRandomSegment("dark008", 49.576);
+addRandomSegment("dark009", 49.72);
+addRandomSegment("dark012", 49.878);
+addRandomSegment("dark008", 50.02);
+addRandomSegment("dark009", 50.196);
+addRandomSegment("dark012", 50.353);
+addRandomSegment("dark008", 50.517);
+
+//addSegment("dark012", 50.517, null, pathEaser);
+
 addSegment("dark008", 55.574, null, pathEaser);
 addSegment("dark009", 60.623, null, pathEaser);
 addSegment("dark012", 65.683, null, pathEaser);

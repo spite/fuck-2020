@@ -6,7 +6,7 @@ import Maf from "../third_party/Maf.js";
 import Easings from "../third_party/easings.js";
 import { loadTexture } from "../js/loader.js";
 
-const dark = loadTexture("assets/manekineko_dark.jpg");
+const dark = loadTexture("assets/manekineko_dark_2.png");
 dark.encoding = sRGBEncoding;
 
 class NekoMaterial extends MeshStandardMaterial {
@@ -15,8 +15,8 @@ class NekoMaterial extends MeshStandardMaterial {
       roughness: 0,
       metalness: 1,
       map: dark,
-      color: 0xffffff,
-      emissive: 0xffffff,
+      color: 0x00d3ff,
+      emissive: 0x00d3ff,
       emissiveMap: dark,
       envMap: null,
       envMapIntensity: 50,
