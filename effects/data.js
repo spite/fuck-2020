@@ -19,7 +19,7 @@ const fuckings = [
   "Fragile male egos",
   "",
   "",
-  "Jordan Petersen",
+  "Jordan Peterson",
   "Cyclones",
   "the stock market",
   "Behringer",
