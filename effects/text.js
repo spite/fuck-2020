@@ -90,7 +90,6 @@ loadTTF("assets/hand.ttf", (font) => {
 const material = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide });
 const outMaterial = new MeshBasicMaterial({
   color: 0xffffff,
-  emissive: 0xffffff,
   transparent: true,
 });
 
