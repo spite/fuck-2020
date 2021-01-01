@@ -7,11 +7,11 @@ A browser demo to send away 2020.
 [See it live](https://spite.github.io/fuck-2020/)
 ## Credits
 
-3d models, design: acidbeat
+3d models, design: [acidbeat](https://www.instagram.com/acidbeat)
 
-music: gloom
+music: [gloom](https://twitter.com/gloom303)
 
-code: spite
+code: [spite](https://twitter.com/thespite)
 
 Modelled and animated with [Blender](https://www.blender.org/).
 
@@ -20,6 +20,8 @@ Build with [esbuild](https://esbuild.github.io/).
 Capture with [CCapture.js](https://github.com/spite/ccapture.js/).  
 
 Composed with [BitWig Studio](https://www.bitwig.com/). FUCK Ableton Live.
+
+Available on [SoundCloud](https://soundcloud.com/gloom/fmmxxdemo)
 
 Shaders:
 - https://www.shadertoy.com/view/tsX3RN
