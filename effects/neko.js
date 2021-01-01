@@ -13,7 +13,6 @@ import { settings } from "../js/settings.js";
 import { canDoFloatLinear } from "../js/features.js";
 
 import { shader as orthoVs } from "../shaders/ortho-vs.js";
-import { shader as highlightFs } from "../shaders/highlight-fs.js";
 import { shader as blurFs } from "../shaders/blur-fs.js";
 import { screen } from "../shaders/screen.js";
 import { chromaticAberration } from "../shaders/chromatic-aberration.js";
@@ -47,15 +46,6 @@ const blurShader = new RawShaderMaterial({
   },
   vertexShader: orthoVs,
   fragmentShader: blurFs,
-});
-
-const highlightShader = new RawShaderMaterial({
-  uniforms: {
-    inputTexture: { value: null },
-    direction: { value: new Vector2(0, 1) },
-  },
-  vertexShader: orthoVs,
-  fragmentShader: highlightFs,
 });
 
 const fragmentShader = `#version 300 es
@@ -324,10 +314,7 @@ class Effect extends glEffectBase {
     this.post.shader.uniforms.inputTexture.value = this.final.fbo.texture;
 
     glitchShader.uniforms.inputTexture.value = this.fbo.texture;
-    this.highlight = new ShaderPass(this.renderer, highlightShader);
-    this.highlight.fbo.texture.encoding = sRGBEncoding;
     shader.uniforms.fbo.value = this.glitch.fbo.texture;
-    highlightShader.uniforms.inputTexture.value = this.glitch.fbo.texture;
 
     this.blurStrength = 1;
     this.blurPasses = [];
@@ -366,7 +353,6 @@ class Effect extends glEffectBase {
     super.setSize(w, h);
     this.post.setSize(w, h);
     this.final.setSize(w, h);
-    this.highlight.setSize(w, h);
     this.glitch.setSize(w, h);
     setDarkSize(w, h);
     setLightSize(w, h);
@@ -448,10 +434,9 @@ class Effect extends glEffectBase {
     this.renderer.setRenderTarget(null);
 
     this.glitch.render();
-    this.highlight.render();
 
     let offset = this.blurStrength;
-    blurShader.uniforms.inputTexture.value = this.highlight.fbo.texture;
+    blurShader.uniforms.inputTexture.value = this.glitch.fbo.texture;
     for (let j = 0; j < this.levels; j++) {
       blurShader.uniforms.direction.value.set(offset, 0);
       const blurPass = this.blurPasses[j];
