@@ -34,3 +34,5 @@ Fonts:
 - https://www.ffonts.net/iCiel-Gotham-Ultra.font
 - https://fonts.google.com/specimen/Bellota
 - https://fonts.google.com/specimen/Just+Another+Hand
+
+GitHub badges by [Tim Holman](https://tholman.com/github-corners/)
