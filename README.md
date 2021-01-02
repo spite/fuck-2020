@@ -23,6 +23,8 @@ Composed with [BitWig Studio](https://www.bitwig.com/). FUCK Ableton Live.
 
 Available on [SoundCloud](https://soundcloud.com/gloom/fmmxxdemo)
 
+Iamges processed with [Squoosh](https://squoosh.app/)
+
 Shaders:
 - https://www.shadertoy.com/view/tsX3RN
 - https://www.shadertoy.com/view/MscGzl
@@ -34,5 +36,8 @@ Fonts:
 - https://www.ffonts.net/iCiel-Gotham-Ultra.font
 - https://fonts.google.com/specimen/Bellota
 - https://fonts.google.com/specimen/Just+Another+Hand
+
+HDR Environment Map:
+- https://hdrihaven.com/hdri/?h=lythwood_room
 
 GitHub badges by [Tim Holman](https://tholman.com/github-corners/)
