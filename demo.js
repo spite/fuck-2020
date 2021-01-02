@@ -89,7 +89,12 @@ const start = document.querySelector("#start");
 const doCapture = !true;
 let capturer;
 if (doCapture) {
-  capturer = new CCapture({ autoSaveTime: 10, format: "png", framerate: 60 });
+  capturer = new CCapture({
+    format: "webm",
+    framerate: 60,
+    motionBlurFrames: 16,
+    quality: 0.9999,
+  });
   window.capturer = capturer;
 }
 

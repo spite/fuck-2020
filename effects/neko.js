@@ -9,8 +9,6 @@ import { ShaderPass } from "../js/ShaderPass.js";
 import { ShaderPingPongPass } from "../js/ShaderPingPongPass.js";
 import { shader as vertexShader } from "../shaders/ortho-vs.js";
 import Maf from "../third_party/Maf.js";
-import { settings } from "../js/settings.js";
-import { canDoFloatLinear } from "../js/features.js";
 
 import { shader as orthoVs } from "../shaders/ortho-vs.js";
 import { shader as blurFs } from "../shaders/blur-fs.js";
