@@ -5,6 +5,16 @@ A browser demo to send away 2020.
 [![Foo](https://raw.githubusercontent.com/spite/fuck-2020/main/snapshot.png)](https://spite.github.io/fuck-2020/)
 
 [See it live](https://spite.github.io/fuck-2020/)
+
+## Captures
+
+Captured directly in the browser with [ccapture.js](https://github.com/spite/ccapture.js/):  
+
+[720p](https://youtu.be/XORA7MqmMv4)  
+[1080p](https://youtu.be/BBtQ-35Z14I)  
+[4K](https://youtu.be/n8KKf-iSf18)  
+[4K with motion blur](https://youtu.be/paoUcQF-i9c)  
+
 ## Credits
 
 3d models, design: [acidbeat](https://www.instagram.com/acidbeat)
