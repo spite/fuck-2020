@@ -6,6 +6,8 @@ A browser demo to send away 2020.
 
 [See it live](https://spite.github.io/fuck-2020/)
 
+[Pouet](https://www.pouet.net/prod.php?which=87651)
+
 ## Captures
 
 Captured directly in the browser with [ccapture.js](https://github.com/spite/ccapture.js/):  
